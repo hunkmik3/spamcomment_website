@@ -1,11 +1,10 @@
 {
-  "version": 2,
-  "functions": {
-    "api/index.py": {
-      "runtime": "python3.9",
-      "maxDuration": 30
+  "builds": [
+    {
+      "src": "api/index.py",
+      "use": "@vercel/python"
     }
-  },
+  ],
   "routes": [
     {
       "src": "/static/(.*)",
@@ -15,10 +14,5 @@
       "src": "/(.*)",
       "dest": "/api/index.py"
     }
-  ],
-  "env": {
-    "PYTHONPATH": "$PYTHONPATH:.",
-    "FLASK_ENV": "production",
-    "PYTHON_VERSION": "3.9"
-  }
+  ]
 }
