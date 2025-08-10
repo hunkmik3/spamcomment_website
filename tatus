@@ -1,0 +1,4 @@
+[33m78a0ae6[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m Trigger Vercel rebuild
+[33mfb05aca[m Simplify vercel.json - use builds instead of functions
+[33md5ac9e2[m Fix vercel.json config
+[33m34c520a[m Initial commit: FB Spam Tool Web Edition
