@@ -209,14 +209,14 @@ def get_index_template():
                     <div class="card-body">
                         <div class="row mb-3">
                             <div class="col-md-6">
-                                <button type="button" class="btn btn-success me-2" data-bs-toggle="modal" data-bs-target="#addTokenModal">
+                                <button type="button" class="btn btn-success me-2" id="btn-add-tokens">
                                     <i class="fas fa-plus me-1"></i>Thêm Tokens
                                 </button>
-                                <button type="button" class="btn btn-warning me-2" onclick="checkAllTokens()">
-                                    <i class="fas fa-sync me-1"></i>Kiểm tra tất cả
+                                <button type="button" class="btn btn-warning me-2" id="btn-check-selected">
+                                    <i class="fas fa-sync me-1"></i>Kiểm tra đã chọn
                                 </button>
-                                <button type="button" class="btn btn-danger me-2" onclick="deleteAllTokens()">
-                                    <i class="fas fa-trash me-1"></i>Xóa tất cả
+                                <button type="button" class="btn btn-danger me-2" id="btn-delete-selected">
+                                    <i class="fas fa-trash me-1"></i>Xóa đã chọn
                                 </button>
                             </div>
                             <div class="col-md-6 text-end">
@@ -234,7 +234,7 @@ def get_index_template():
                                 <thead class="table-dark">
                                     <tr>
                                         <th width="5%">
-                                            <input type="checkbox" id="selectAllTokens" onchange="toggleSelectAll()">
+                                            <input type="checkbox" id="select-all-tokens">
                                         </th>
                                         <th width="10%">STT</th>
                                         <th width="25%">Page Name</th>
@@ -243,7 +243,7 @@ def get_index_template():
                                         <th width="15%">Thao tác</th>
                                     </tr>
                                 </thead>
-                                <tbody id="tokenTableBody">
+                                <tbody id="tokens-table-body">
                                     <!-- Tokens will be loaded here -->
                                 </tbody>
                             </table>
@@ -268,14 +268,14 @@ def get_index_template():
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="mb-3">
-                                        <label for="targetUrl" class="form-label">URL Bài Viết/Post ID</label>
-                                        <input type="text" class="form-control" id="targetUrl" required
-                                               placeholder="https://facebook.com/post/123... hoặc post_id">
+                                        <label for="post-uids" class="form-label">Post UIDs (mỗi UID một dòng)</label>
+                                        <textarea class="form-control" id="post-uids" rows="4" required
+                                                  placeholder="Nhập post UIDs..."></textarea>
                                     </div>
                                     
                                     <div class="mb-3">
-                                        <label for="commentText" class="form-label">Nội dung Comment</label>
-                                        <textarea class="form-control" id="commentText" rows="4" required
+                                        <label for="comment-text" class="form-label">Nội dung Comment</label>
+                                        <textarea class="form-control" id="comment-text" rows="4" required
                                                   placeholder="Nhập nội dung comment..."></textarea>
                                     </div>
                                 </div>
@@ -285,11 +285,11 @@ def get_index_template():
                                         <label class="form-label">Thời gian chờ (giây)</label>
                                         <div class="row">
                                             <div class="col-6">
-                                                <input type="number" class="form-control" id="delayMin" value="5" min="1" max="300">
+                                                <input type="number" class="form-control" id="delay-min" value="5" min="1" max="300">
                                                 <small class="text-muted">Tối thiểu</small>
                                             </div>
                                             <div class="col-6">
-                                                <input type="number" class="form-control" id="delayMax" value="15" min="1" max="300">
+                                                <input type="number" class="form-control" id="delay-max" value="15" min="1" max="300">
                                                 <small class="text-muted">Tối đa</small>
                                             </div>
                                         </div>
@@ -298,14 +298,14 @@ def get_index_template():
                                     <div class="mb-3">
                                         <label class="form-label">Tùy chọn</label>
                                         <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" id="autoLike" checked>
-                                            <label class="form-check-label" for="autoLike">
+                                            <input class="form-check-input" type="checkbox" id="auto-like" checked>
+                                            <label class="form-check-label" for="auto-like">
                                                 Tự động like bài viết
                                             </label>
                                         </div>
                                         <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" id="randomComment">
-                                            <label class="form-check-label" for="randomComment">
+                                            <input class="form-check-input" type="checkbox" id="random-comments">
+                                            <label class="form-check-label" for="random-comments">
                                                 Random thứ tự comment
                                             </label>
                                         </div>
@@ -320,10 +320,10 @@ def get_index_template():
                             </div>
                             
                             <div class="text-center">
-                                <button type="submit" class="btn btn-success btn-lg me-2" id="startSpamBtn">
+                                <button type="button" class="btn btn-success btn-lg me-2" id="btn-start-spam">
                                     <i class="fas fa-play me-1"></i>Bắt đầu Spam
                                 </button>
-                                <button type="button" class="btn btn-danger btn-lg" id="stopSpamBtn" style="display: none;">
+                                <button type="button" class="btn btn-danger btn-lg" id="btn-stop-spam" style="display: none;">
                                     <i class="fas fa-stop me-1"></i>Dừng Spam
                                 </button>
                             </div>
@@ -342,12 +342,12 @@ def get_index_template():
                             <i class="fas fa-list me-2"></i>
                             Logs Hoạt Động
                         </h5>
-                        <button type="button" class="btn btn-sm btn-outline-light" onclick="clearLogs()">
+                        <button type="button" class="btn btn-sm btn-outline-light" id="btn-clear-logs">
                             <i class="fas fa-trash me-1"></i>Xóa Logs
                         </button>
                     </div>
                     <div class="card-body p-0">
-                        <div id="logsContainer" style="height: 400px; overflow-y: auto; padding: 15px;">
+                        <div id="logs-container" style="height: 400px; overflow-y: auto; padding: 15px;">
                             <!-- Logs will appear here -->
                         </div>
                     </div>
@@ -357,7 +357,7 @@ def get_index_template():
     </div>
 
     <!-- Add Token Modal -->
-    <div class="modal fade" id="addTokenModal" tabindex="-1">
+    <div class="modal fade" id="addTokensModal" tabindex="-1">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
@@ -367,15 +367,15 @@ def get_index_template():
                 <div class="modal-body">
                     <form id="addTokenForm">
                         <div class="mb-3">
-                            <label for="tokensInput" class="form-label">Tokens (mỗi token một dòng)</label>
-                            <textarea class="form-control" id="tokensInput" rows="10" required
+                            <label for="tokens-input" class="form-label">Tokens (mỗi token một dòng)</label>
+                            <textarea class="form-control" id="tokens-input" rows="10" required
                                       placeholder="Nhập tokens, mỗi token một dòng..."></textarea>
                         </div>
                     </form>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
-                    <button type="button" class="btn btn-primary" onclick="addTokens()">Thêm Tokens</button>
+                    <button type="button" class="btn btn-primary" id="btn-save-tokens">Thêm Tokens</button>
                 </div>
             </div>
         </div>
@@ -389,8 +389,8 @@ def get_index_template():
                     <div class="spinner-border spinner-border-lg text-primary mb-3" role="status">
                         <span class="visually-hidden">Loading...</span>
                     </div>
-                    <h5 id="loadingText">Đang xử lý...</h5>
-                    <p class="text-muted mb-0" id="loadingSubtext">Vui lòng đợi</p>
+                    <h5 id="loading-text">Đang xử lý...</h5>
+                    <p class="text-muted mb-0" id="loading-detail">Vui lòng đợi</p>
                 </div>
             </div>
         </div>
@@ -401,149 +401,205 @@ def get_index_template():
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     
     <script>
-        // Basic JavaScript functionality
-        let isSpamming = false;
-        let spamInterval = null;
+        // Global variables - Match local version exactly
         let socket = null;
+        let tokensData = [];
+        let spamStatus = { is_running: false };
+        let autoRefreshInterval = null;
         
-        // Initialize app
-        $(document).ready(function() {
-            loadTokens();
-            setupFormHandlers();
-            setupEmergencyCleanup();
-            updateUptime();
-            
-            // Try to connect Socket.IO (will fail gracefully on Vercel)
+        // Initialize Socket.IO connection (graceful fallback for Vercel)
+        function initializeSocketIO() {
             try {
                 socket = io();
+                
                 socket.on('connect', function() {
-                    updateConnectionStatus(true);
-                    addLog('Đã kết nối WebSocket', 'success');
+                    showConnectionStatus('connected', 'Đã kết nối');
+                    addLog('Kết nối WebSocket thành công!', 'success');
                 });
+                
                 socket.on('disconnect', function() {
-                    updateConnectionStatus(false);
-                    addLog('Mất kết nối WebSocket', 'warning');
+                    showConnectionStatus('disconnected', 'Mất kết nối');
+                    addLog('Mất kết nối WebSocket. Đang thử kết nối lại...', 'warning');
                 });
+                
+                socket.on('reconnect', function() {
+                    showConnectionStatus('connected', 'Đã kết nối');
+                    addLog('Đã kết nối lại WebSocket!', 'success');
+                });
+                
             } catch (e) {
                 console.log('Socket.IO not available:', e);
+                showConnectionStatus('disconnected', 'Chế độ HTTP');
                 addLog('Chạy ở chế độ HTTP (không có WebSocket)', 'info');
             }
-        });
+        }
         
-        function setupFormHandlers() {
-            $('#spamForm').on('submit', function(e) {
-                e.preventDefault();
-                startSpam();
+        function showConnectionStatus(status, text) {
+            const statusIcon = $('#status-icon');
+            const statusText = $('#status-text');
+            const connectionDiv = $('#connection-status');
+            
+            if (status === 'connected') {
+                statusIcon.removeClass('text-danger').addClass('text-success');
+                connectionDiv.removeClass('disconnected').addClass('connected');
+            } else {
+                statusIcon.removeClass('text-success').addClass('text-danger');
+                connectionDiv.removeClass('connected').addClass('disconnected');
+            }
+            statusText.text(text);
+        }
+        
+        // Initialize main application - Match local version exactly
+        function initializeApp() {
+            // Token management events
+            $('#btn-add-tokens').click(() => $('#addTokensModal').modal('show'));
+            
+            // Add tokens
+            $('#btn-save-tokens').click(addTokens);
+            
+            // Token table events
+            $('#select-all-tokens').change(toggleAllTokens);
+            $('#btn-check-selected').click(checkSelectedTokens);
+            $('#btn-delete-selected').click(deleteSelectedTokens);
+            
+            // Spam management
+            $('#btn-start-spam').click(startSpam);
+            $('#btn-stop-spam').click(stopSpam);
+            
+            // Logs
+            $('#btn-clear-logs').click(clearLogs);
+            
+            // Setup modal event handlers
+            setupModalHandlers();
+            
+            // Setup emergency cleanup
+            setupEmergencyCleanup();
+        }
+        
+        function setupModalHandlers() {
+            // Handle loading modal events
+            $('#loadingModal').on('hidden.bs.modal', function() {
+                // Reset modal state when hidden
+                $('#loading-text').text('Đang xử lý...');
+                $('#loading-detail').text('Vui lòng đợi');
             });
             
-            $('#imageUpload').on('change', function() {
-                handleImageUpload(this);
+            // Prevent loading modal from being closed by user
+            $('#loadingModal').on('hide.bs.modal', function(e) {
+                // Only allow programmatic hiding
+                if (!$(this).data('allow-hide')) {
+                    e.preventDefault();
+                    return false;
+                }
             });
         }
         
-        function loadTokens() {
-            showLoadingModal('Đang tải tokens...');
+        function setupEmergencyCleanup() {
+            // Emergency cleanup when clicking anywhere on page
+            $(document).on('click', function(e) {
+                // Check if there's a backdrop but no visible modal
+                if ($('.modal-backdrop').length > 0 && !$('.modal.show').length) {
+                    console.log('Detected stuck modal backdrop, cleaning up...');
+                    forceCleanupModal();
+                }
+            });
             
+            // Emergency cleanup on ESC key
+            $(document).keydown(function(e) {
+                if (e.keyCode === 27) { // ESC key
+                    if ($('body').hasClass('modal-open') && !$('.modal.show').length) {
+                        console.log('ESC pressed with modal-open but no visible modal, cleaning up...');
+                        forceCleanupModal();
+                    }
+                }
+                
+                // Ctrl+Shift+F for manual cleanup
+                if (e.ctrlKey && e.shiftKey && e.keyCode === 70) {
+                    forceCleanupModal();
+                }
+            });
+            
+            // Periodic check for stuck modals
+            setInterval(function() {
+                if ($('body').hasClass('modal-open') && !$('.modal.show').length) {
+                    console.log('Periodic check: detected stuck modal state, cleaning up...');
+                    forceCleanupModal();
+                }
+            }, 5000);
+        }
+        
+        // Token management functions - Match local version exactly
+        function addTokens() {
+            const tokensText = $('#tokens-input').val().trim();
+            if (!tokensText) {
+                showAlert('Vui lòng nhập token!', 'warning');
+                return;
+            }
+            
+            showLoadingModal('Đang thêm tokens...', 'Vui lòng đợi');
+            
+            $.ajax({
+                url: '/api/tokens',
+                method: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({ tokens: tokensText }),
+                timeout: 30000, // 30 second timeout
+                success: function(response) {
+                    if (response.success) {
+                        $('#addTokensModal').modal('hide');
+                        $('#tokens-input').val('');
+                        loadTokensData(); // This will not show loading modal
+                        showAlert(response.message || 'Đã thêm tokens thành công!', 'success');
+                    } else {
+                        showAlert(response.message, 'danger');
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error('Add tokens error:', status, error);
+                    if (status === 'timeout') {
+                        showAlert('Timeout khi thêm tokens! Vui lòng thử lại.', 'warning');
+                    } else {
+                        showAlert('Lỗi khi thêm tokens: ' + error, 'danger');
+                    }
+                },
+                complete: function() {
+                    // Always hide loading modal regardless of success or error
+                    hideLoadingModal();
+                }
+            });
+        }
+        
+        // Load tokens data WITHOUT loading modal (like local version)
+        function loadTokensData() {
             $.ajax({
                 url: '/api/tokens',
                 method: 'GET',
                 timeout: 10000,
                 success: function(response) {
                     if (response.success) {
-                        displayTokens(response.tokens);
+                        tokensData = response.tokens;
+                        renderTokensTable();
                         updateStatistics();
                     } else {
-                        showAlert('Lỗi: ' + response.message, 'danger');
+                        console.error('Load tokens error:', response.message);
+                        showAlert('Lỗi tải tokens: ' + response.message, 'danger');
                     }
                 },
                 error: function(xhr, status, error) {
-                    console.error('Load tokens error:', error);
-                    showAlert('Không thể tải tokens: ' + error, 'danger');
-                },
-                complete: function() {
-                    hideLoadingModal();
+                    console.error('Error loading tokens data:', status, error);
+                    // Don't show alert for load errors, just log them
+                    tokensData = [];
+                    renderTokensTable();
+                    updateStatistics();
                 }
             });
         }
         
-        function addTokens() {
-            const tokens = $('#tokensInput').val().trim();
-            if (!tokens) {
-                showAlert('Vui lòng nhập tokens', 'warning');
-                return;
-            }
-            
-            showLoadingModal('Đang thêm tokens...');
-            
-            $.ajax({
-                url: '/api/tokens',
-                method: 'POST',
-                contentType: 'application/json',
-                data: JSON.stringify({ tokens: tokens }),
-                timeout: 30000,
-                success: function(response) {
-                    if (response.success) {
-                        showAlert('Đã thêm tokens thành công!', 'success');
-                        $('#addTokenModal').modal('hide');
-                        $('#tokensInput').val('');
-                        loadTokens();
-                    } else {
-                        showAlert('Lỗi: ' + response.message, 'danger');
-                    }
-                },
-                error: function(xhr, status, error) {
-                    console.error('Add tokens error:', error);
-                    showAlert('Không thể thêm tokens: ' + error, 'danger');
-                },
-                complete: function() {
-                    hideLoadingModal();
-                }
-            });
-        }
-        
-        function startSpam() {
-            const formData = {
-                target_url: $('#targetUrl').val(),
-                comment_text: $('#commentText').val(),
-                delay_min: parseInt($('#delayMin').val()),
-                delay_max: parseInt($('#delayMax').val()),
-                auto_like: $('#autoLike').is(':checked'),
-                random_comment: $('#randomComment').is(':checked')
-            };
-            
-            showLoadingModal('Đang khởi chạy spam...');
-            
-            $.ajax({
-                url: '/api/spam/start',
-                method: 'POST',
-                contentType: 'application/json',
-                data: JSON.stringify(formData),
-                timeout: 10000,
-                success: function(response) {
-                    if (response.success) {
-                        showAlert(response.message, 'success');
-                        isSpamming = true;
-                        $('#startSpamBtn').hide();
-                        $('#stopSpamBtn').show();
-                    } else {
-                        showAlert('Lỗi: ' + response.message, 'danger');
-                    }
-                },
-                error: function(xhr, status, error) {
-                    console.error('Start spam error:', error);
-                    showAlert('Không thể khởi chạy spam: ' + error, 'danger');
-                },
-                complete: function() {
-                    hideLoadingModal();
-                }
-            });
-        }
-        
-        function displayTokens(tokens) {
-            const tbody = $('#tokenTableBody');
+        function renderTokensTable() {
+            const tbody = $('#tokens-table-body');
             tbody.empty();
             
-            if (!tokens || tokens.length === 0) {
+            if (!tokensData || tokensData.length === 0) {
                 tbody.append(`
                     <tr>
                         <td colspan="6" class="text-center text-muted">
@@ -555,18 +611,20 @@ def get_index_template():
                 return;
             }
             
-            tokens.forEach((token, index) => {
+            tokensData.forEach((token, index) => {
                 const statusClass = token.status === 'LIVE' ? 'live' : 'die';
                 const statusBadge = token.status === 'LIVE' ? 
                     '<span class="badge bg-success">LIVE</span>' : 
                     '<span class="badge bg-danger">DIE</span>';
                 
+                const tokenDisplay = token.token ? token.token.substring(0, 20) + '...' : 'N/A';
+                
                 tbody.append(`
                     <tr class="token-row ${statusClass}" data-token-id="${token.id}">
                         <td><input type="checkbox" class="token-checkbox" value="${token.id}"></td>
                         <td>${index + 1}</td>
-                        <td>${token.page_name}</td>
-                        <td><code>${token.token.substring(0, 20)}...</code></td>
+                        <td>${token.page_name || 'Unknown'}</td>
+                        <td><code>${tokenDisplay}</code></td>
                         <td>${statusBadge}</td>
                         <td>
                             <button class="btn btn-sm btn-outline-info me-1" onclick="viewTokenDetails('${token.id}')" title="Chi tiết">
@@ -593,7 +651,7 @@ def get_index_template():
                 success: function(response) {
                     if (response.success) {
                         showAlert('Đã xóa token thành công!', 'success');
-                        loadTokens();
+                        loadTokensData();
                     } else {
                         showAlert('Lỗi: ' + response.message, 'danger');
                     }
@@ -609,23 +667,84 @@ def get_index_template():
         }
         
         function updateStatistics() {
-            const tokens = $('#tokenTableBody tr').not(':contains("Chưa có tokens")').length;
-            const liveTokens = $('#tokenTableBody .badge.bg-success').length;
+            const totalTokens = tokensData.length;
+            const liveTokens = tokensData.filter(token => token.status === 'LIVE').length;
             
-            $('#total-tokens').text(tokens);
+            $('#total-tokens').text(totalTokens);
             $('#live-tokens').text(liveTokens);
         }
         
-        function updateConnectionStatus(connected) {
-            const statusIcon = $('#status-icon');
-            const statusText = $('#status-text');
+        function startSpam() {
+            const postUIDs = $('#post-uids').val().trim();
+            const commentText = $('#comment-text').val().trim();
             
-            if (connected) {
-                statusIcon.removeClass('text-danger').addClass('text-success');
-                statusText.text('Đã kết nối');
+            if (!postUIDs) {
+                showAlert('Vui lòng nhập Post UIDs!', 'warning');
+                return;
+            }
+            
+            if (!commentText) {
+                showAlert('Vui lòng nhập nội dung comment!', 'warning');
+                return;
+            }
+            
+            const data = {
+                post_uids: postUIDs,
+                comment_text: commentText,
+                delay_min: parseInt($('#delay-min').val()),
+                delay_max: parseInt($('#delay-max').val()),
+                auto_like: $('#auto-like').is(':checked'),
+                random_comments: $('#random-comments').is(':checked')
+            };
+            
+            showLoadingModal('Đang bắt đầu spam...', 'Chuẩn bị các comment tasks');
+            
+            $.ajax({
+                url: '/api/spam/start',
+                method: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(data),
+                timeout: 30000,
+                success: function(response) {
+                    if (response.success) {
+                        showAlert(response.message, 'success');
+                        spamStatus.is_running = true;
+                        updateSpamUI();
+                    } else {
+                        showAlert(response.message, 'danger');
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error('Start spam error:', status, error);
+                    if (status === 'timeout') {
+                        showAlert('Timeout khi bắt đầu spam! Vui lòng thử lại.', 'warning');
+                    } else {
+                        showAlert('Lỗi khi bắt đầu spam: ' + error, 'danger');
+                    }
+                },
+                complete: function() {
+                    // Fallback to hide modal after 10 seconds
+                    setTimeout(function() {
+                        hideLoadingModal();
+                    }, 10000);
+                }
+            });
+        }
+        
+        function stopSpam() {
+            if (!confirm('Bạn có chắc muốn dừng spam?')) return;
+            spamStatus.is_running = false;
+            updateSpamUI();
+            addLog('Đã dừng spam', 'warning');
+        }
+        
+        function updateSpamUI() {
+            if (spamStatus.is_running) {
+                $('#btn-start-spam').hide();
+                $('#btn-stop-spam').show();
             } else {
-                statusIcon.removeClass('text-success').addClass('text-danger');
-                statusText.text('Mất kết nối');
+                $('#btn-start-spam').show();
+                $('#btn-stop-spam').hide();
             }
         }
         
@@ -647,23 +766,106 @@ def get_index_template():
                 </div>
             `;
             
-            $('#logsContainer').append(logEntry);
-            $('#logsContainer').scrollTop($('#logsContainer')[0].scrollHeight);
+            $('#logs-container').append(logEntry);
+            $('#logs-container').scrollTop($('#logs-container')[0].scrollHeight);
         }
         
         function clearLogs() {
-            $('#logsContainer').empty();
+            $('#logs-container').empty();
             addLog('Logs đã được xóa', 'info');
         }
         
-        function showLoadingModal(text = 'Đang xử lý...', subtext = 'Vui lòng đợi') {
-            $('#loadingText').text(text);
-            $('#loadingSubtext').text(subtext);
+        function showLoadingModal(title, detail = '') {
+            $('#loading-text').text(title);
+            $('#loading-detail').text(detail);
+            
+            // Reset allow-hide flag
+            $('#loadingModal').data('allow-hide', false);
             $('#loadingModal').modal('show');
+            
+            // Auto-hide modal after 2 minutes as absolute fallback
+            setTimeout(function() {
+                hideLoadingModal();
+            }, 120000);
         }
         
         function hideLoadingModal() {
-            $('#loadingModal').modal('hide');
+            try {
+                // Set flag to allow hiding
+                $('#loadingModal').data('allow-hide', true);
+                $('#loadingModal').modal('hide');
+                
+                // Immediately force cleanup
+                setTimeout(function() {
+                    // Force remove modal classes and backdrop
+                    $('#loadingModal').removeClass('show');
+                    $('.modal-backdrop').remove();
+                    $('body').removeClass('modal-open');
+                    $('body').css('overflow', ''); // Reset body overflow
+                    $('body').css('padding-right', ''); // Reset padding
+                    
+                    // Reset flag
+                    $('#loadingModal').data('allow-hide', false);
+                    
+                    // Re-enable all buttons and inputs
+                    $('button, input, select, textarea').prop('disabled', false);
+                    
+                    console.log('Loading modal cleanup completed');
+                }, 100);
+            } catch (error) {
+                console.error('Error hiding loading modal:', error);
+                // Force cleanup even if there's an error
+                forceCleanupModal();
+            }
+        }
+        
+        function forceCleanupModal() {
+            try {
+                console.log('Starting force cleanup...');
+                
+                // Hide all modals
+                $('.modal').modal('hide').removeClass('show in').hide();
+                
+                // Remove all backdrops
+                $('.modal-backdrop, .modal-backdrop.fade, .modal-backdrop.show, .modal-backdrop.fade.show').remove();
+                
+                // Reset body
+                $('body').removeClass('modal-open').css({
+                    'overflow': '',
+                    'overflow-x': '',
+                    'overflow-y': '',
+                    'padding-right': '',
+                    'padding-left': '',
+                    'margin-right': '',
+                    'position': ''
+                });
+                
+                // Reset html
+                $('html').css({
+                    'overflow': '',
+                    'padding-right': ''
+                });
+                
+                // Re-enable all interactive elements
+                $('button, input, select, textarea, a, [tabindex]').prop('disabled', false);
+                
+                // Reset any z-index issues
+                $('.modal').css('z-index', '');
+                
+                // Clear any stuck event handlers
+                $(document).off('focusin.modal');
+                
+                // Show success message
+                showAlert('Đã khắc phục lỗi giao diện thành công!', 'success');
+                
+                console.log('Force cleanup completed successfully');
+            } catch (error) {
+                console.error('Force cleanup failed:', error);
+                // Last resort - reload page
+                if (confirm('Không thể khắc phục lỗi giao diện. Bạn có muốn reload trang?')) {
+                    location.reload();
+                }
+            }
         }
         
         function showAlert(message, type = 'info') {
@@ -690,28 +892,6 @@ def get_index_template():
             }, 5000);
         }
         
-        function forceCleanupModal() {
-            try {
-                // Hide all modals
-                $('.modal').modal('hide');
-                $('.modal-backdrop').remove();
-                $('body').removeClass('modal-open').css('overflow', '');
-                
-                showAlert('Đã khắc phục lỗi giao diện thành công!', 'success');
-            } catch (error) {
-                console.error('Force cleanup failed:', error);
-            }
-        }
-        
-        function setupEmergencyCleanup() {
-            // Add keyboard shortcut
-            $(document).keydown(function(e) {
-                if (e.ctrlKey && e.shiftKey && e.keyCode === 70) { // Ctrl+Shift+F
-                    forceCleanupModal();
-                }
-            });
-        }
-        
         function updateUptime() {
             let startTime = Date.now();
             setInterval(() => {
@@ -724,40 +904,40 @@ def get_index_template():
         }
         
         // Placeholder functions
-        function checkAllTokens() {
-            showAlert('Tính năng đang phát triển...', 'info');
+        function checkSelectedTokens() {
+            showAlert('Tính năng kiểm tra tokens đang phát triển cho môi trường serverless...', 'info');
         }
         
-        function deleteAllTokens() {
-            showAlert('Tính năng đang phát triển...', 'info');
+        function deleteSelectedTokens() {
+            showAlert('Tính năng xóa nhiều tokens đang phát triển...', 'info');
         }
         
-        function toggleSelectAll() {
-            const isChecked = $('#selectAllTokens').is(':checked');
+        function toggleAllTokens() {
+            const isChecked = $('#select-all-tokens').is(':checked');
             $('.token-checkbox').prop('checked', isChecked);
         }
         
         function viewTokenDetails(tokenId) {
-            showAlert('Tính năng đang phát triển...', 'info');
+            showAlert('Tính năng xem chi tiết token đang phát triển...', 'info');
         }
         
-        function handleImageUpload(input) {
-            if (input.files && input.files[0]) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    $('#imagePreview').html(`
-                        <img src="${e.target.result}" class="img-thumbnail" style="max-width: 200px;">
-                        <button type="button" class="btn btn-sm btn-outline-danger ms-2" onclick="$('#imagePreview').empty(); $('#imageUpload').val('');">
-                            <i class="fas fa-times"></i>
-                        </button>
-                    `);
-                };
-                reader.readAsDataURL(input.files[0]);
-            }
-        }
-        
-        // Initial log
-        addLog('Ứng dụng đã khởi chạy thành công!', 'success');
+        // Initialize everything when document is ready
+        $(document).ready(function() {
+            // Initialize Socket.IO (with graceful fallback)
+            initializeSocketIO();
+            
+            // Initialize main app
+            initializeApp();
+            
+            // Load initial data
+            loadTokensData();
+            
+            // Start uptime counter
+            updateUptime();
+            
+            // Initial log
+            addLog('Ứng dụng đã khởi chạy thành công! (Phiên bản Vercel)', 'success');
+        });
     </script>
 </body>
 </html>
