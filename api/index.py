@@ -100,8 +100,13 @@ else:
             return render_template('index.html')
         except Exception as e:
             logger.error(f"Template error: {e}")
-            # Fallback HTML if template not found
-            return '''
+            # Use embedded template for Vercel
+            try:
+                from api.templates import get_index_template
+                return get_index_template()
+            except ImportError:
+                # Ultimate fallback HTML
+                return '''
             <!DOCTYPE html>
             <html lang="vi">
             <head>
