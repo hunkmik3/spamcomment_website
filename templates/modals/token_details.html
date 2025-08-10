@@ -1,0 +1,106 @@
+<!-- Token Details Modal -->
+<div class="modal fade" id="tokenDetailsModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-info text-white">
+                <h5 class="modal-title">
+                    <i class="fas fa-info-circle me-2"></i>
+                    📊 Chi Tiết Token
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6><i class="fas fa-user me-2"></i>Thông tin tài khoản:</h6>
+                        <table class="table table-sm">
+                            <tr>
+                                <td><strong>Tên:</strong></td>
+                                <td id="token-account-name">-</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Status:</strong></td>
+                                <td id="token-status">-</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Comments gửi:</strong></td>
+                                <td id="token-comments-sent">-</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Thêm lúc:</strong></td>
+                                <td id="token-added-time">-</td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div class="col-md-6">
+                        <h6><i class="fas fa-key me-2"></i>Token Information:</h6>
+                        <div class="form-group">
+                            <label class="form-label small">Token (chỉ hiển thị một phần):</label>
+                            <input type="text" class="form-control font-monospace" 
+                                   id="token-display" readonly>
+                        </div>
+                        
+                        <div class="mt-3">
+                            <button class="btn btn-outline-primary btn-sm me-2" id="btn-copy-token">
+                                <i class="fas fa-copy me-1"></i>Copy Token
+                            </button>
+                            <button class="btn btn-outline-info btn-sm me-2" id="btn-recheck-token">
+                                <i class="fas fa-sync me-1"></i>Kiểm Tra Lại
+                            </button>
+                            <button class="btn btn-outline-danger btn-sm" id="btn-delete-single-token">
+                                <i class="fas fa-trash me-1"></i>Xóa Token
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <hr>
+                
+                <div class="row">
+                    <div class="col-12">
+                        <h6><i class="fas fa-chart-line me-2"></i>Thống kê sử dụng:</h6>
+                        <div class="row text-center">
+                            <div class="col-3">
+                                <div class="card bg-light">
+                                    <div class="card-body py-2">
+                                        <h6 class="card-title mb-1" id="token-rate-usage">0/100</h6>
+                                        <small class="text-muted">Rate Limit</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-3">
+                                <div class="card bg-light">
+                                    <div class="card-body py-2">
+                                        <h6 class="card-title mb-1" id="token-last-used">-</h6>
+                                        <small class="text-muted">Lần cuối dùng</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-3">
+                                <div class="card bg-light">
+                                    <div class="card-body py-2">
+                                        <h6 class="card-title mb-1" id="token-success-rate">-</h6>
+                                        <small class="text-muted">Tỷ lệ thành công</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-3">
+                                <div class="card bg-light">
+                                    <div class="card-body py-2">
+                                        <h6 class="card-title mb-1" id="token-errors">0</h6>
+                                        <small class="text-muted">Lỗi</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="fas fa-times me-1"></i>Đóng
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

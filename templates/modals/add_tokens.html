@@ -1,0 +1,43 @@
+<!-- Add Tokens Modal -->
+<div class="modal fade" id="addTokensModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-success text-white">
+                <h5 class="modal-title">
+                    <i class="fas fa-plus me-2"></i>
+                    ➕ Nhập Token Facebook
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle me-2"></i>
+                    <strong>Hướng dẫn:</strong> Nhập các token Facebook, mỗi token một dòng. Tool sẽ tự động kiểm tra và loại bỏ token trùng lặp.
+                </div>
+                
+                <label class="form-label fw-bold">🔑 Nhập Token - Mỗi token một dòng:</label>
+                <textarea class="form-control font-monospace" id="tokens-input" rows="12" 
+                         placeholder="Nhập token ở đây, mỗi token một dòng...
+Ví dụ:
+EAAG...
+EAAG...
+EAAG..."></textarea>
+                
+                <div class="mt-3">
+                    <small class="text-muted">
+                        <i class="fas fa-shield-alt me-1"></i>
+                        Token sẽ được mã hóa và chỉ lưu trữ trong phiên làm việc hiện tại.
+                    </small>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="fas fa-times me-1"></i>❌ Hủy
+                </button>
+                <button type="button" class="btn btn-success" id="btn-save-tokens">
+                    <i class="fas fa-save me-1"></i>✅ Thêm Token
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

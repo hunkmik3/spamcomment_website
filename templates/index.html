@@ -1,0 +1,285 @@
+{% extends "base.html" %}
+
+{% block content %}
+<!-- Page Header -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card bg-gradient-primary text-white">
+            <div class="card-body">
+                <h1 class="card-title mb-0">
+                    <i class="fas fa-rocket me-2"></i>
+                    Tool Spam FB Token - Professional Web Edition
+                </h1>
+                <p class="card-text mb-0 opacity-75">
+                    Quản lý tokens, spam comments tự động và live chat - Phiên bản web chuyên nghiệp
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Statistics Cards -->
+<div class="row mb-4">
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body text-center">
+                <i class="fas fa-key fa-2x text-primary mb-2"></i>
+                <h4 class="fw-bold mb-1" id="total-tokens">0</h4>
+                <small class="text-muted">Tổng Tokens</small>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body text-center">
+                <i class="fas fa-check-circle fa-2x text-success mb-2"></i>
+                <h4 class="fw-bold mb-1" id="live-tokens">0</h4>
+                <small class="text-muted">Tokens LIVE</small>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body text-center">
+                <i class="fas fa-comments fa-2x text-info mb-2"></i>
+                <h4 class="fw-bold mb-1" id="total-comments">0</h4>
+                <small class="text-muted">Comments Đã Gửi</small>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body text-center">
+                <i class="fas fa-cog fa-2x text-warning mb-2"></i>
+                <h4 class="fw-bold mb-1" id="tool-status">Sẵn Sàng</h4>
+                <small class="text-muted">Trạng Thái Tool</small>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Token Management Section -->
+<div class="row mb-4" id="token-management">
+    <div class="col-12">
+        <div class="card shadow-sm">
+            <div class="card-header bg-primary text-white">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-key me-2"></i>
+                    🔑 Quản Lý Tài Khoản
+                </h5>
+            </div>
+            <div class="card-body">
+                <!-- Token Actions -->
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <button class="btn btn-success me-2" id="btn-add-tokens">
+                            <i class="fas fa-plus me-1"></i>➕ Nhập Token
+                        </button>
+                        <button class="btn btn-info me-2" id="btn-check-selected">
+                            <i class="fas fa-check me-1"></i>🔍 Kiểm Tra Đã Chọn
+                        </button>
+                        <button class="btn btn-warning me-2" id="btn-upload-images">
+                            <i class="fas fa-image me-1"></i>📁 Upload Ảnh
+                        </button>
+                    </div>
+                    <div class="col-md-6 text-end">
+                        <div class="btn-group">
+                            <button class="btn btn-outline-danger dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                                <i class="fas fa-trash me-1"></i>Xóa Tokens
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="#" id="btn-delete-selected">Xóa Đã Chọn</a></li>
+                                <li><a class="dropdown-item" href="#" id="btn-delete-die">Xóa Tokens DIE</a></li>
+                                <li><a class="dropdown-item" href="#" id="btn-delete-duplicates">Xóa Tokens Trùng</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item text-danger" href="#" id="btn-delete-all">Xóa Tất Cả</a></li>
+                            </ul>
+                        </div>
+                        <div class="form-check form-check-inline ms-3">
+                            <input class="form-check-input" type="checkbox" id="auto-like">
+                            <label class="form-check-label" for="auto-like">
+                                ❤️ Tự động Like bài viết
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Token Table -->
+                <div class="table-responsive">
+                    <table class="table table-hover" id="tokens-table">
+                        <thead class="table-dark">
+                            <tr>
+                                <th width="50">
+                                    <input type="checkbox" id="select-all-tokens" class="form-check-input">
+                                </th>
+                                <th>👤 UID/Name</th>
+                                <th>🔑 Token</th>
+                                <th>📊 Status</th>
+                                <th>⚙️ Process</th>
+                                <th width="100">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tokens-table-body">
+                            <tr>
+                                <td colspan="6" class="text-center text-muted py-4">
+                                    <i class="fas fa-info-circle me-2"></i>
+                                    Chưa có token nào. Nhấn "➕ Nhập Token" để thêm token.
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+                <!-- Image Gallery -->
+                <div class="mt-3" id="image-gallery" style="display: none;">
+                    <h6><i class="fas fa-images me-2"></i>Ảnh Đã Upload</h6>
+                    <div class="row" id="image-gallery-content"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Settings and Auto Spam Section -->
+<div class="row mb-4" id="spam-section">
+    <div class="col-lg-8">
+        <div class="card shadow-sm">
+            <div class="card-header bg-success text-white">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-rocket me-2"></i>
+                    🚀 Post & Comment - Auto Spam
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold">📝 Post UID</label>
+                        <textarea class="form-control" id="post-uids" rows="4" 
+                                placeholder="Nhập Post UID, mỗi UID một dòng..."></textarea>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold">💬 Comment</label>
+                        <textarea class="form-control" id="comment-texts" rows="4" 
+                                placeholder="Nhập nội dung comment, mỗi comment một dòng..."></textarea>
+                    </div>
+                </div>
+                
+                <div class="row mt-3">
+                    <div class="col-12">
+                        <button class="btn btn-success btn-lg me-3" id="btn-start-spam">
+                            <i class="fas fa-play me-2"></i>▶️ Start Spam
+                        </button>
+                        <button class="btn btn-danger btn-lg" id="btn-stop-spam" disabled>
+                            <i class="fas fa-stop me-2"></i>⏹️ Stop
+                        </button>
+                        
+                        <div class="float-end">
+                            <div class="progress" style="width: 200px; height: 25px;">
+                                <div class="progress-bar progress-bar-striped progress-bar-animated" 
+                                     id="spam-progress" role="progressbar" style="width: 0%">
+                                    0/0
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-4">
+        <div class="card shadow-sm">
+            <div class="card-header bg-warning text-dark">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-cog me-2"></i>
+                    ⚙️ Cài Đặt & Trạng Thái
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row g-3">
+                    <div class="col-6">
+                        <label class="form-label small">⏱️ Min Delay (ms)</label>
+                        <input type="number" class="form-control form-control-sm" id="min-delay" value="500">
+                    </div>
+                    <div class="col-6">
+                        <label class="form-label small">⏱️ Max Delay (ms)</label>
+                        <input type="number" class="form-control form-control-sm" id="max-delay" value="2500">
+                    </div>
+                    <div class="col-6">
+                        <label class="form-label small">🔄 Max Threads</label>
+                        <input type="number" class="form-control form-control-sm" id="max-threads" value="10">
+                    </div>
+                    <div class="col-6">
+                        <label class="form-label small">💬 Số Comment</label>
+                        <input type="number" class="form-control form-control-sm" id="num-comments" value="0">
+                    </div>
+                    <div class="col-12">
+                        <label class="form-label small">🖼️ Comment + Ảnh</label>
+                        <input type="number" class="form-control form-control-sm" id="num-image-comments" value="0">
+                    </div>
+                </div>
+                
+                <hr>
+                
+                <div class="status-cards">
+                    <div class="alert alert-success mb-2" id="status-alert">
+                        <i class="fas fa-check-circle me-2"></i>
+                        <strong>✅ Tool Đã Sẵn Sàng Chạy</strong>
+                    </div>
+                    
+                    <div class="alert alert-info mb-2">
+                        <i class="fas fa-chart-bar me-2"></i>
+                        <strong id="progress-text">📊 Comment 0/0</strong>
+                    </div>
+                    
+                    <div class="alert alert-warning mb-0">
+                        <i class="fas fa-chart-line me-2"></i>
+                        <strong id="total-posted-text">📈 Tổng comment đã chạy: 0</strong>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<!-- Logs Section -->
+<div class="row">
+    <div class="col-12">
+        <div class="card shadow-sm">
+            <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-terminal me-2"></i>
+                    📋 Logs & Hoạt Động
+                </h5>
+                <button class="btn btn-outline-light btn-sm" id="btn-clear-logs">
+                    <i class="fas fa-trash me-1"></i>Xóa Logs
+                </button>
+            </div>
+            <div class="card-body p-0">
+                <div id="logs-container" class="p-3 bg-dark text-light font-monospace" 
+                     style="height: 300px; overflow-y: auto; font-size: 0.9em;">
+                    <div class="text-success">
+                        <i class="fas fa-info-circle me-2"></i>
+                        [INFO] Tool khởi động thành công. Sẵn sàng sử dụng!
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modals -->
+{% include 'modals/add_tokens.html' %}
+{% include 'modals/upload_images.html' %}
+{% include 'modals/token_details.html' %}
+
+{% endblock %}
+
+{% block document_ready %}
+    initializeApp();
+    loadTokensData();
+    loadImagesData();
+    startAutoRefresh();
+{% endblock %}
