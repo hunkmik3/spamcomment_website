@@ -1,17 +1,17 @@
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Spam Manager for Web App - Quản lý spam comments
+Spam Manager for Web App - Quản lý spam process với threading
 @origin 250724-01 (Plants1.3)
 """
 
-import os
 import time
-import random
 import threading
-from concurrent.futures import ThreadPoolExecutor
-from collections import defaultdict
-from typing import List, Dict, Optional, Any
+import random
 import logging
+from concurrent.futures import ThreadPoolExecutor, as_completed
+from typing import List, Dict, Optional, Any
+from queue import Queue
 
 from .facebook_api import WebFacebookAPI
 
@@ -19,357 +19,326 @@ logger = logging.getLogger(__name__)
 
 
 class SpamManager:
-    """Quản lý spam comments cho web environment"""
+    """Quản lý spam process với multi-threading"""
     
-    def __init__(self, socketio, token_manager):
-        self.socketio = socketio
+    def __init__(self, session_id: str, token_manager, socketio=None):
+        self.session_id = session_id
         self.token_manager = token_manager
+        self.socketio = socketio
         
-        # Session-based spam status
-        self.spam_sessions = defaultdict(lambda: {
-            'is_running': False,
-            'stop_event': threading.Event(),
-            'executor': None,
-            'futures': [],
-            'stats': {
-                'comments_sent': 0,
-                'total_comments': 0,
-                'start_time': None,
-                'errors': 0
-            },
-            'current_settings': {}
-        })
+        # Spam state
+        self.is_running_flag = False
+        self.should_stop = False
+        self.executor = None
+        
+        # Statistics
+        self.stats = {
+            'comments_sent': 0,
+            'total_comments': 0,
+            'successful_comments': 0,
+            'failed_comments': 0,
+            'posts_processed': 0,
+            'total_posts': 0,
+            'start_time': 0,
+            'end_time': 0
+        }
         
         # Thread safety
         self.lock = threading.Lock()
-
-    def _get_spam_session(self, session_id: str) -> Dict:
-        """Lấy spam session data"""
-        return self.spam_sessions[session_id]
-
-    def start_spam(self, session_id: str, post_uids: List[str], comments: List[str], settings: Dict) -> bool:
-        """Bắt đầu spam comments"""
+    
+    def is_running(self) -> bool:
+        """Kiểm tra spam có đang chạy không"""
+        return self.is_running_flag
+    
+    def start_spam(self, post_uids: List[str], comment_texts: List[str], settings: Dict):
+        """Bắt đầu spam process"""
+        if self.is_running_flag:
+            raise Exception("Spam đang chạy")
+        
         with self.lock:
-            spam_session = self._get_spam_session(session_id)
+            self.is_running_flag = True
+            self.should_stop = False
             
-            if spam_session['is_running']:
-                logger.warning(f"Spam already running for session {session_id}")
-                return False
-            
-            # Validate settings
-            try:
-                min_delay = settings['min_delay']
-                max_delay = settings['max_delay'] 
-                max_threads = settings['max_threads']
-                num_comments = settings['num_comments']
-                num_image_comments = settings['num_image_comments']
-                auto_like = settings['auto_like']
-                
-                if min_delay >= max_delay:
-                    raise ValueError("Min delay must be less than max delay")
-                if num_comments <= 0:
-                    raise ValueError("Number of comments must be > 0")
-                if max_threads <= 0:
-                    raise ValueError("Max threads must be > 0")
-                    
-            except (KeyError, ValueError) as e:
-                logger.error(f"Invalid settings: {e}")
-                return False
-            
-            # Check if we have available tokens
-            if not self.token_manager.has_available_tokens(session_id):
-                logger.error(f"No available tokens for session {session_id}")
-                return False
-            
-            # Clean post UIDs
-            clean_post_uids = []
-            for uid in post_uids:
-                clean_uid = uid.split(" (")[0] if " (" in uid else uid
-                clean_post_uids.append(clean_uid)
-            
-            # Initialize spam session
-            spam_session['is_running'] = True
-            spam_session['stop_event'].clear()
-            spam_session['stats'] = {
+            # Reset statistics
+            self.stats = {
                 'comments_sent': 0,
-                'total_comments': len(clean_post_uids) * num_comments,
+                'total_comments': len(post_uids) * len(comment_texts),
+                'successful_comments': 0,
+                'failed_comments': 0,
+                'posts_processed': 0,
+                'total_posts': len(post_uids),
                 'start_time': time.time(),
-                'errors': 0
+                'end_time': 0
             }
-            spam_session['current_settings'] = settings.copy()
-            
-            # Start spam in background thread
-            threading.Thread(
-                target=self._run_spam_background,
-                args=(session_id, clean_post_uids, comments, settings),
-                daemon=True
-            ).start()
-            
-            logger.info(f"Started spam for session {session_id}")
-            return True
-
-    def _run_spam_background(self, session_id: str, post_uids: List[str], comments: List[str], settings: Dict):
-        """Chạy spam trong background thread"""
-        spam_session = self._get_spam_session(session_id)
         
-        try:
-            # Extract settings
-            min_delay = settings['min_delay']
-            max_delay = settings['max_delay']
-            max_threads = settings['max_threads']
-            num_comments = settings['num_comments']
-            num_image_comments = settings['num_image_comments']
-            auto_like = settings['auto_like']
-            
-            # Create thread pool
-            spam_session['executor'] = ThreadPoolExecutor(max_workers=max_threads)
-            spam_session['futures'] = []
-            
-            # Send start notification
+        # Emit spam started event
+        if self.socketio:
             self.socketio.emit('spam_started', {
-                'total_comments': spam_session['stats']['total_comments'],
-                'posts': len(post_uids)
-            }, room=session_id)
-            
-            # Process each post
-            for post_index, post_uid in enumerate(post_uids):
-                if spam_session['stop_event'].is_set():
-                    break
-                
-                # Determine which comments should have images
-                image_indices = set(random.sample(range(num_comments), 
-                                                min(num_image_comments, num_comments)))
-                
-                # Submit comment tasks
-                for comment_index in range(num_comments):
-                    if spam_session['stop_event'].is_set():
-                        break
-                    
-                    comment_text = comments[comment_index % len(comments)]
-                    with_image = comment_index in image_indices
-                    
-                    future = spam_session['executor'].submit(
-                        self._process_comment_task,
-                        session_id, post_uid, comment_text, 
-                        min_delay, max_delay, with_image, auto_like,
-                        post_index + 1, len(post_uids)
-                    )
-                    spam_session['futures'].append(future)
-            
-            # Wait for all tasks to complete
-            for future in spam_session['futures']:
-                try:
-                    future.result(timeout=30)  # 30 second timeout per task
-                except Exception as e:
-                    logger.error(f"Task failed: {e}")
-                    spam_session['stats']['errors'] += 1
-            
-        except Exception as e:
-            logger.error(f"Error in spam background: {e}")
-            spam_session['stats']['errors'] += 1
+                'total_comments': self.stats['total_comments'],
+                'posts': self.stats['total_posts']
+            }, room=self.session_id)
         
-        finally:
-            # Cleanup
-            if spam_session['executor']:
-                spam_session['executor'].shutdown(wait=False)
-            
-            spam_session['is_running'] = False
-            
-            # Send completion notification
-            self.socketio.emit('spam_completed', {
-                'stats': spam_session['stats'],
-                'duration': time.time() - spam_session['stats']['start_time']
-            }, room=session_id)
-            
-            logger.info(f"Spam completed for session {session_id}")
-
-    def _process_comment_task(self, session_id: str, post_uid: str, comment_text: str, 
-                            min_delay: int, max_delay: int, with_image: bool, auto_like: bool,
-                            post_number: int, total_posts: int):
-        """Xử lý một comment task"""
-        spam_session = self._get_spam_session(session_id)
-        
-        if spam_session['stop_event'].is_set():
-            return
+        logger.info(f"Starting spam for session {self.session_id}: {len(post_uids)} posts, {len(comment_texts)} comments")
         
         try:
-            # Random delay
-            delay = random.uniform(min_delay / 1000, max_delay / 1000)
-            time.sleep(delay)
+            self._run_spam(post_uids, comment_texts, settings)
+        except Exception as e:
+            logger.error(f"Error in spam process: {e}")
+            if self.socketio:
+                self.socketio.emit('spam_error', {
+                    'message': str(e)
+                }, room=self.session_id)
+        finally:
+            self._finish_spam()
+    
+    def stop_spam(self):
+        """Dừng spam process"""
+        with self.lock:
+            self.should_stop = True
             
-            if spam_session['stop_event'].is_set():
-                return
+        if self.executor:
+            # Cancel pending futures
+            self.executor.shutdown(wait=False)
+        
+        # Emit stopped event
+        if self.socketio:
+            self.socketio.emit('spam_stopped', {
+                'stats': self.stats
+            }, room=self.session_id)
+        
+        logger.info(f"Spam stopped for session {self.session_id}")
+    
+    def _run_spam(self, post_uids: List[str], comment_texts: List[str], settings: Dict):
+        """Chạy spam process chính"""
+        max_threads = min(settings.get('max_threads', 10), 20)  # Limit max threads
+        min_delay = settings.get('min_delay', 5000) / 1000.0  # Convert to seconds
+        max_delay = settings.get('max_delay', 15000) / 1000.0
+        auto_like = settings.get('auto_like', True)
+        
+        # Create thread pool
+        self.executor = ThreadPoolExecutor(max_workers=max_threads)
+        
+        # Create comment tasks
+        tasks = []
+        for post_uid in post_uids:
+            for comment_text in comment_texts:
+                if self.should_stop:
+                    break
+                    
+                task_data = {
+                    'post_uid': post_uid,
+                    'comment_text': comment_text,
+                    'auto_like': auto_like,
+                    'delay': random.uniform(min_delay, max_delay)
+                }
+                
+                future = self.executor.submit(self._spam_single_comment, task_data)
+                tasks.append(future)
+            
+            if self.should_stop:
+                break
+        
+        # Wait for all tasks to complete
+        for future in as_completed(tasks):
+            if self.should_stop:
+                break
+                
+            try:
+                result = future.result(timeout=60)  # 60 second timeout per task
+                self._update_progress(result)
+            except Exception as e:
+                logger.error(f"Task failed: {e}")
+                self._update_progress({'success': False, 'error': str(e)})
+    
+    def _spam_single_comment(self, task_data: Dict) -> Dict:
+        """Xử lý một comment task"""
+        try:
+            # Apply delay before processing
+            time.sleep(task_data['delay'])
+            
+            if self.should_stop:
+                return {'success': False, 'cancelled': True}
             
             # Get available token
-            token_info = self.token_manager.get_available_token(session_id)
-            if not token_info:
-                logger.error(f"No available token for session {session_id}")
-                spam_session['stats']['errors'] += 1
-                return
+            token_data = self.token_manager.get_available_token(self.session_id)
+            if not token_data:
+                return {'success': False, 'error': 'Không có token khả dụng'}
+            
+            token = token_data['token']
+            token_id = token_data['id']
             
             # Check rate limiting
-            if not self.token_manager.can_use_token(session_id, token_info['id']):
-                logger.warning(f"Token {token_info['id']} hit rate limit")
-                spam_session['stats']['errors'] += 1
-                return
+            if not self.token_manager.can_use_token(self.session_id, token_id):
+                return {'success': False, 'error': f'Token {token_id} đã đạt rate limit'}
+            
+            post_uid = task_data['post_uid']
+            comment_text = task_data['comment_text']
             
             # Send comment
-            success = False
-            comment_id = None
+            success, comment_id = WebFacebookAPI.comment_text_only(post_uid, token, comment_text)
             
-            if with_image:
-                # Try to send with image
-                image_path = self._get_random_image(session_id)
-                if image_path:
-                    photo_id = WebFacebookAPI.upload_image_to_facebook(token_info['token'], image_path)
-                    if photo_id:
-                        success, comment_id = WebFacebookAPI.comment_with_image(
-                            post_uid, token_info['token'], comment_text, photo_id
-                        )
-                
-                # Fallback to text-only if image failed
-                if not success:
-                    success, comment_id = WebFacebookAPI.comment_text_only(
-                        post_uid, token_info['token'], comment_text
-                    )
-            else:
-                # Text-only comment
-                success, comment_id = WebFacebookAPI.comment_text_only(
-                    post_uid, token_info['token'], comment_text
-                )
-            
-            if success and comment_id:
-                # Update token usage
-                self.token_manager.use_token(session_id, token_info['id'])
-                
-                # Update stats
-                with self.lock:
-                    spam_session['stats']['comments_sent'] += 1
+            if success:
+                # Mark token as used
+                self.token_manager.use_token(self.session_id, token_id)
                 
                 # Auto like if enabled
-                if auto_like:
-                    WebFacebookAPI.like_post(token_info['token'], post_uid)
+                if task_data['auto_like']:
+                    like_success = WebFacebookAPI.like_post(token, post_uid)
+                    logger.info(f"Auto like {'successful' if like_success else 'failed'} for post {post_uid}")
                 
-                # Send progress update
-                self.socketio.emit('spam_progress', {
-                    'comments_sent': spam_session['stats']['comments_sent'],
-                    'total_comments': spam_session['stats']['total_comments'],
-                    'post_number': post_number,
-                    'total_posts': total_posts,
+                return {
+                    'success': True,
                     'comment_id': comment_id,
                     'post_uid': post_uid,
-                    'with_image': with_image
-                }, room=session_id)
-                
-                logger.info(f"Comment sent successfully: {comment_id}")
-                
+                    'token_id': token_id,
+                    'with_image': False
+                }
             else:
-                spam_session['stats']['errors'] += 1
-                # Mark token as potentially dead if multiple failures
-                self.token_manager.mark_token_dead(session_id, token_info['id'])
+                # Comment failed - might be token issue
+                if comment_id is None:  # Likely token problem
+                    self.token_manager.mark_token_dead(self.session_id, token_id)
+                    logger.warning(f"Marked token {token_id} as dead due to comment failure")
                 
-                self.socketio.emit('spam_error', {
-                    'message': f'Comment failed for post {post_uid}',
-                    'post_uid': post_uid
-                }, room=session_id)
+                return {
+                    'success': False,
+                    'error': 'Comment failed',
+                    'post_uid': post_uid,
+                    'token_id': token_id
+                }
                 
         except Exception as e:
-            logger.error(f"Error in comment task: {e}")
-            spam_session['stats']['errors'] += 1
+            logger.error(f"Error in spam task: {e}")
+            return {'success': False, 'error': str(e)}
+    
+    def _update_progress(self, result: Dict):
+        """Cập nhật progress và emit events"""
+        with self.lock:
+            self.stats['comments_sent'] += 1
             
+            if result.get('success'):
+                self.stats['successful_comments'] += 1
+            else:
+                self.stats['failed_comments'] += 1
+        
+        # Emit progress event
+        if self.socketio and result.get('success'):
+            self.socketio.emit('spam_progress', {
+                'comments_sent': self.stats['comments_sent'],
+                'total_comments': self.stats['total_comments'],
+                'comment_id': result.get('comment_id'),
+                'post_uid': result.get('post_uid'),
+                'with_image': result.get('with_image', False)
+            }, room=self.session_id)
+        
+        # Emit error if needed
+        if self.socketio and not result.get('success') and not result.get('cancelled'):
             self.socketio.emit('spam_error', {
-                'message': f'Error processing comment: {str(e)}',
-                'post_uid': post_uid
-            }, room=session_id)
+                'message': result.get('error', 'Unknown error'),
+                'post_uid': result.get('post_uid'),
+                'token_id': result.get('token_id')
+            }, room=self.session_id)
+    
+    def _finish_spam(self):
+        """Kết thúc spam process"""
+        with self.lock:
+            self.is_running_flag = False
+            self.stats['end_time'] = time.time()
+            duration = self.stats['end_time'] - self.stats['start_time']
+        
+        # Shutdown executor
+        if self.executor:
+            self.executor.shutdown(wait=True)
+            self.executor = None
+        
+        # Emit completion event
+        if self.socketio:
+            self.socketio.emit('spam_completed', {
+                'stats': self.stats,
+                'duration': duration
+            }, room=self.session_id)
+        
+        logger.info(f"Spam completed for session {self.session_id}. "
+                   f"Success: {self.stats['successful_comments']}, "
+                   f"Failed: {self.stats['failed_comments']}, "
+                   f"Duration: {duration:.1f}s")
+    
+    def get_stats(self) -> Dict:
+        """Lấy thống kê hiện tại"""
+        with self.lock:
+            stats = self.stats.copy()
+            if self.is_running_flag and stats['start_time'] > 0:
+                stats['duration'] = time.time() - stats['start_time']
+            else:
+                stats['duration'] = stats['end_time'] - stats['start_time'] if stats['end_time'] > 0 else 0
+            
+            return stats
 
-    def _get_random_image(self, session_id: str) -> Optional[str]:
-        """Lấy ảnh ngẫu nhiên từ session folder"""
+
+class ImageSpamManager(SpamManager):
+    """Spam Manager with image support"""
+    
+    def _spam_single_comment_with_image(self, task_data: Dict) -> Dict:
+        """Xử lý comment với ảnh"""
         try:
-            session_folder = os.path.join('uploads/images', session_id)
-            if not os.path.exists(session_folder):
-                return None
+            # Apply delay
+            time.sleep(task_data['delay'])
             
-            images = []
-            for filename in os.listdir(session_folder):
-                if filename.lower().endswith(('.jpg', '.jpeg', '.png', '.gif')):
-                    images.append(os.path.join(session_folder, filename))
+            if self.should_stop:
+                return {'success': False, 'cancelled': True}
             
-            if images:
-                return random.choice(images)
-            return None
+            # Get available token
+            token_data = self.token_manager.get_available_token(self.session_id)
+            if not token_data:
+                return {'success': False, 'error': 'Không có token khả dụng'}
             
+            token = token_data['token']
+            token_id = token_data['id']
+            
+            # Check rate limiting
+            if not self.token_manager.can_use_token(self.session_id, token_id):
+                return {'success': False, 'error': f'Token {token_id} đã đạt rate limit'}
+            
+            post_uid = task_data['post_uid']
+            comment_text = task_data['comment_text']
+            image_path = task_data['image_path']
+            
+            # Upload image first
+            photo_id = WebFacebookAPI.upload_image_to_facebook(token, image_path)
+            if not photo_id:
+                return {'success': False, 'error': 'Upload ảnh thất bại'}
+            
+            # Send comment with image
+            success, comment_id = WebFacebookAPI.comment_with_image(post_uid, token, comment_text, photo_id)
+            
+            if success:
+                # Mark token as used
+                self.token_manager.use_token(self.session_id, token_id)
+                
+                # Auto like if enabled
+                if task_data['auto_like']:
+                    like_success = WebFacebookAPI.like_post(token, post_uid)
+                    logger.info(f"Auto like {'successful' if like_success else 'failed'} for post {post_uid}")
+                
+                return {
+                    'success': True,
+                    'comment_id': comment_id,
+                    'post_uid': post_uid,
+                    'token_id': token_id,
+                    'with_image': True,
+                    'photo_id': photo_id
+                }
+            else:
+                # Comment failed
+                if comment_id is None:
+                    self.token_manager.mark_token_dead(self.session_id, token_id)
+                
+                return {
+                    'success': False,
+                    'error': 'Comment với ảnh thất bại',
+                    'post_uid': post_uid,
+                    'token_id': token_id
+                }
+                
         except Exception as e:
-            logger.error(f"Error getting random image: {e}")
-            return None
-
-    def stop_spam(self, session_id: str) -> bool:
-        """Dừng spam comments"""
-        with self.lock:
-            spam_session = self._get_spam_session(session_id)
-            
-            if not spam_session['is_running']:
-                logger.warning(f"Spam not running for session {session_id}")
-                return False
-            
-            # Set stop event
-            spam_session['stop_event'].set()
-            
-            # Cancel pending futures
-            for future in spam_session['futures']:
-                future.cancel()
-            
-            # Shutdown executor
-            if spam_session['executor']:
-                spam_session['executor'].shutdown(wait=False)
-            
-            spam_session['is_running'] = False
-            
-            # Send stop notification
-            self.socketio.emit('spam_stopped', {
-                'stats': spam_session['stats']
-            }, room=session_id)
-            
-            logger.info(f"Stopped spam for session {session_id}")
-            return True
-
-    def get_status(self, session_id: str) -> Dict:
-        """Lấy trạng thái spam"""
-        spam_session = self._get_spam_session(session_id)
-        
-        status = {
-            'is_running': spam_session['is_running'],
-            'stats': spam_session['stats'].copy(),
-            'settings': spam_session['current_settings'].copy()
-        }
-        
-        if spam_session['stats']['start_time']:
-            status['runtime'] = time.time() - spam_session['stats']['start_time']
-        
-        return status
-
-    def cleanup_session(self, session_id: str):
-        """Dọn dẹp session data"""
-        with self.lock:
-            if session_id in self.spam_sessions:
-                spam_session = self.spam_sessions[session_id]
-                
-                # Stop if running
-                if spam_session['is_running']:
-                    self.stop_spam(session_id)
-                
-                # Delete session data
-                del self.spam_sessions[session_id]
-                
-                logger.info(f"Cleaned up spam session: {session_id}")
-
-    def get_all_sessions_status(self) -> Dict:
-        """Lấy trạng thái tất cả sessions"""
-        status = {}
-        for session_id, spam_session in self.spam_sessions.items():
-            status[session_id] = {
-                'is_running': spam_session['is_running'],
-                'comments_sent': spam_session['stats']['comments_sent'],
-                'total_comments': spam_session['stats']['total_comments'],
-                'errors': spam_session['stats']['errors']
-            }
-        return status
+            logger.error(f"Error in image spam task: {e}")
+            return {'success': False, 'error': str(e)}

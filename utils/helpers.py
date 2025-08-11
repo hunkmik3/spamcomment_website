@@ -151,3 +151,21 @@ def validate_comment_text(text: str) -> tuple[bool, str]:
             return False, "Comment chứa nội dung không được phép"
     
     return True, "OK"
+
+
+def get_image_path(session_id: str, filename: str, upload_folder: str) -> str:
+    """Get full path to uploaded image"""
+    import os
+    return os.path.join(upload_folder, session_id, filename)
+
+
+def delete_image_file(filepath: str) -> bool:
+    """Delete image file safely"""
+    try:
+        import os
+        if os.path.exists(filepath):
+            os.remove(filepath)
+            return True
+        return False
+    except Exception:
+        return False

@@ -19,7 +19,7 @@ logger = logging.getLogger(__name__)
 class WebTokenManager:
     """Quản lý tokens và rate limiting cho web environment"""
     
-    def __init__(self):
+    def __init__(self, session_id=None):
         # Rate limiting configuration
         self.rate_limit = 100  # comments per hour
         self.rate_limit_window = 3600  # 1 hour in seconds
@@ -35,6 +35,9 @@ class WebTokenManager:
         
         # Thread safety
         self.lock = threading.Lock()
+        
+        # Legacy compatibility
+        self.session_id = session_id
 
     def _get_session_data(self, session_id: str) -> Dict:
         """Lấy data của session"""
