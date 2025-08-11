@@ -1,105 +1,232 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Template content for Vercel deployment
+Complete Template content for Vercel deployment - Match Local Version EXACTLY
 @origin 250724-01 (Plants1.3)
 """
 
 def get_index_template():
-    """Return full HTML content for index page"""
+    """Return COMPLETE HTML content matching local version exactly"""
     return '''
 <!DOCTYPE html>
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FB Spam Tool - Web Version</title>
+    <title>🚀 Tool Spam FB Token - Professional Web Edition</title>
     
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    
     <!-- Font Awesome -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     
-    <!-- Socket.IO (for future use) -->
-    <script src="https://cdn.socket.io/4.7.0/socket.io.min.js"></script>
+    <!-- Socket.IO -->
+    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
     
     <!-- Custom CSS -->
     <style>
+        /* Custom Properties */
+        :root {
+            --primary-color: #007bff;
+            --success-color: #28a745;
+            --warning-color: #ffc107;
+            --danger-color: #dc3545;
+            --info-color: #17a2b8;
+            --dark-color: #343a40;
+            --light-color: #f8f9fa;
+            
+            --border-radius: 8px;
+            --box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+            --box-shadow-lg: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+        }
+
+        /* Global Styles */
         body {
-            background-color: #f8f9fa;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f5f5;
+            line-height: 1.6;
         }
-        .navbar-brand {
-            font-weight: bold;
-        }
+
+        /* Card Enhancements */
         .card {
-            transition: transform 0.2s ease-in-out;
+            border: none;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            transition: all 0.3s ease;
         }
+
         .card:hover {
+            box-shadow: var(--box-shadow-lg);
             transform: translateY(-2px);
         }
+
+        .card-header {
+            border-bottom: none;
+            border-radius: var(--border-radius) var(--border-radius) 0 0 !important;
+        }
+
+        /* Gradient Backgrounds */
         .bg-gradient-primary {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
         }
+
+        /* Token Table Styles */
+        .token-row {
+            transition: all 0.2s ease;
+        }
+
+        .token-row:hover {
+            background-color: #f8f9fa;
+        }
+
+        .token-row.selected {
+            background-color: #e3f2fd;
+        }
+
         .token-row.live {
-            background-color: #d1edff;
+            border-left: 4px solid #28a745;
         }
+
         .token-row.die {
-            background-color: #ffebee;
+            border-left: 4px solid #dc3545;
         }
+
+        /* Status Badge Styles */
+        .status-badge {
+            font-size: 0.8em;
+            font-weight: bold;
+            padding: 0.25em 0.6em;
+            border-radius: 10px;
+        }
+
         .status-badge.live {
             background-color: #28a745;
+            color: white;
         }
+
         .status-badge.die {
             background-color: #dc3545;
+            color: white;
         }
+
+        /* Log Styles */
         .log-entry {
-            padding: 8px 12px;
-            margin: 2px 0;
-            border-radius: 4px;
+            padding: 4px 8px;
+            margin: 1px 0;
+            border-radius: 3px;
             font-family: 'Courier New', monospace;
-            font-size: 0.9em;
+            font-size: 0.85em;
+            line-height: 1.4;
         }
+
         .log-info {
-            background-color: #e3f2fd;
-            border-left: 4px solid #2196f3;
+            color: #0d6efd;
         }
+
         .log-success {
-            background-color: #e8f5e8;
-            border-left: 4px solid #4caf50;
+            color: #198754;
         }
+
         .log-warning {
-            background-color: #fff3e0;
-            border-left: 4px solid #ff9800;
+            color: #fd7e14;
         }
+
         .log-error {
-            background-color: #ffebee;
-            border-left: 4px solid #f44336;
-        }
-        #connection-status.connected {
-            color: #28a745;
-        }
-        #connection-status.disconnected {
             color: #dc3545;
         }
-        #loadingModal .modal-content {
-            border: none;
-            border-radius: 15px;
+
+        /* Connection Status */
+        #connection-status.connected {
+            color: #28a745 !important;
         }
-        .spinner-border-lg {
-            width: 3rem;
-            height: 3rem;
+
+        #connection-status.disconnected {
+            color: #dc3545 !important;
+        }
+
+        /* Modal Styles */
+        .modal-content {
+            border: none;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow-lg);
+        }
+
+        /* Image Preview */
+        .image-thumbnail {
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+            border-radius: var(--border-radius);
+            border: 2px solid #dee2e6;
+            transition: all 0.2s ease;
+        }
+
+        .image-thumbnail:hover {
+            border-color: #007bff;
+            transform: scale(1.05);
+        }
+
+        /* Drag & Drop Area */
+        .upload-dropzone {
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .upload-dropzone:hover {
+            background-color: #f8f9fa;
+            border-color: #007bff !important;
+        }
+
+        .upload-dropzone.dragover {
+            background-color: #e3f2fd;
+            border-color: #007bff !important;
+        }
+
+        /* Progress Bar */
+        .progress {
+            height: 10px;
+            border-radius: 5px;
+        }
+
+        /* Button Enhancements */
+        .btn {
+            border-radius: var(--border-radius);
+            transition: all 0.2s ease;
+        }
+
+        .btn:hover {
+            transform: translateY(-1px);
+        }
+
+        /* Navbar */
+        .navbar-brand {
+            font-weight: bold;
+            font-size: 1.2em;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container-fluid {
+                padding: 0.5rem;
+            }
+            
+            .card-body {
+                padding: 1rem;
+            }
+            
+            .btn {
+                margin-bottom: 0.5rem;
+            }
         }
     </style>
 </head>
 <body>
     <!-- Navigation -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary sticky-top">
         <div class="container-fluid">
-            <a class="navbar-brand" href="#">
-                <i class="fab fa-facebook me-2"></i>
-                FB Spam Tool
+            <a class="navbar-brand fw-bold" href="#">
+                <i class="fas fa-rocket me-2"></i>
+                FB Spam Tool - Web Edition
             </a>
             
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
@@ -107,9 +234,9 @@ def get_index_template():
             </button>
             
             <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav me-auto">
+                <ul class="navbar-nav ms-auto">
                     <li class="nav-item">
-                        <a class="nav-link" href="#token-section">
+                        <a class="nav-link" href="#token-management">
                             <i class="fas fa-key me-1"></i>Tokens
                         </a>
                     </li>
@@ -118,9 +245,6 @@ def get_index_template():
                             <i class="fas fa-comments me-1"></i>Auto Spam
                         </a>
                     </li>
-                </ul>
-                
-                <ul class="navbar-nav">
                     <li class="nav-item">
                         <button class="btn btn-outline-light btn-sm me-2" id="emergency-cleanup" 
                                 onclick="forceCleanupModal()" title="Khắc phục lỗi giao diện">
@@ -138,7 +262,11 @@ def get_index_template():
         </div>
     </nav>
 
-    <div class="container-fluid mt-4">
+    <!-- Main Content -->
+    <div class="container-fluid py-4">
+        <!-- Alert Container -->
+        <div id="alert-container"></div>
+
         <!-- Page Header -->
         <div class="row mb-4">
             <div class="col-12">
@@ -149,7 +277,7 @@ def get_index_template():
                             Tool Spam FB Token - Professional Web Edition
                         </h1>
                         <p class="card-text mb-0 opacity-75">
-                            Quản lý tokens, spam comments tự động - Phiên bản web chuyên nghiệp
+                            Quản lý tokens, spam comments tự động và live chat - Phiên bản web chuyên nghiệp
                         </p>
                     </div>
                 </div>
@@ -188,146 +316,188 @@ def get_index_template():
             <div class="col-md-3">
                 <div class="card border-0 shadow-sm">
                     <div class="card-body text-center">
-                        <i class="fas fa-clock fa-2x text-warning mb-2"></i>
-                        <h4 class="fw-bold mb-1" id="uptime">0:00:00</h4>
-                        <small class="text-muted">Thời Gian Hoạt Động</small>
+                        <i class="fas fa-cog fa-2x text-warning mb-2"></i>
+                        <h4 class="fw-bold mb-1" id="tool-status">Sẵn Sàng</h4>
+                        <small class="text-muted">Trạng Thái Tool</small>
                     </div>
                 </div>
             </div>
         </div>
 
         <!-- Token Management Section -->
-        <div class="row mb-4" id="token-section">
+        <div class="row mb-4" id="token-management">
             <div class="col-12">
                 <div class="card shadow-sm">
                     <div class="card-header bg-primary text-white">
-                        <h5 class="mb-0">
+                        <h5 class="card-title mb-0">
                             <i class="fas fa-key me-2"></i>
-                            Quản lý Tokens
+                            🔑 Quản Lý Tài Khoản
                         </h5>
                     </div>
                     <div class="card-body">
+                        <!-- Token Actions -->
                         <div class="row mb-3">
                             <div class="col-md-6">
-                                <button type="button" class="btn btn-success me-2" id="btn-add-tokens">
-                                    <i class="fas fa-plus me-1"></i>Thêm Tokens
+                                <button class="btn btn-success me-2" id="btn-add-tokens">
+                                    <i class="fas fa-plus me-1"></i>➕ Nhập Token
                                 </button>
-                                <button type="button" class="btn btn-warning me-2" id="btn-check-selected">
-                                    <i class="fas fa-sync me-1"></i>Kiểm tra đã chọn
+                                <button class="btn btn-info me-2" id="btn-check-selected">
+                                    <i class="fas fa-check me-1"></i>🔍 Kiểm Tra Đã Chọn
                                 </button>
-                                <button type="button" class="btn btn-danger me-2" id="btn-delete-selected">
-                                    <i class="fas fa-trash me-1"></i>Xóa đã chọn
+                                <button class="btn btn-warning me-2" id="btn-upload-images">
+                                    <i class="fas fa-image me-1"></i>📁 Upload Ảnh
                                 </button>
                             </div>
                             <div class="col-md-6 text-end">
-                                <div class="input-group">
-                                    <input type="text" class="form-control" id="tokenSearch" placeholder="Tìm kiếm token...">
-                                    <button class="btn btn-outline-secondary" type="button">
-                                        <i class="fas fa-search"></i>
+                                <div class="btn-group">
+                                    <button class="btn btn-outline-danger dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                                        <i class="fas fa-trash me-1"></i>Xóa Tokens
                                     </button>
+                                    <ul class="dropdown-menu">
+                                        <li><a class="dropdown-item" href="#" id="btn-delete-selected">Xóa Đã Chọn</a></li>
+                                        <li><a class="dropdown-item" href="#" id="btn-delete-die">Xóa Tokens DIE</a></li>
+                                        <li><a class="dropdown-item" href="#" id="btn-delete-duplicates">Xóa Tokens Trùng</a></li>
+                                        <li><hr class="dropdown-divider"></li>
+                                        <li><a class="dropdown-item text-danger" href="#" id="btn-delete-all">Xóa Tất Cả</a></li>
+                                    </ul>
+                                </div>
+                                <div class="form-check form-check-inline ms-3">
+                                    <input class="form-check-input" type="checkbox" id="auto-like">
+                                    <label class="form-check-label" for="auto-like">
+                                        👍 Auto Like
+                                    </label>
                                 </div>
                             </div>
                         </div>
                         
+                        <!-- Tokens Table -->
                         <div class="table-responsive">
                             <table class="table table-hover">
                                 <thead class="table-dark">
                                     <tr>
                                         <th width="5%">
-                                            <input type="checkbox" id="select-all-tokens">
+                                            <input type="checkbox" id="select-all-tokens" class="form-check-input">
                                         </th>
-                                        <th width="10%">STT</th>
-                                        <th width="25%">Page Name</th>
-                                        <th width="35%">Token</th>
-                                        <th width="10%">Trạng thái</th>
-                                        <th width="15%">Thao tác</th>
+                                        <th width="5%">STT</th>
+                                        <th width="20%">👤 Page Name</th>
+                                        <th width="40%">🔑 Token</th>
+                                        <th width="10%">📊 Trạng Thái</th>
+                                        <th width="10%">⚡ Comments</th>
+                                        <th width="10%">🛠️ Thao Tác</th>
                                     </tr>
                                 </thead>
                                 <tbody id="tokens-table-body">
-                                    <!-- Tokens will be loaded here -->
+                                    <tr>
+                                        <td colspan="7" class="text-center text-muted py-4">
+                                            <i class="fas fa-info-circle me-2"></i>
+                                            Chưa có tokens nào. Hãy thêm tokens để bắt đầu.
+                                        </td>
+                                    </tr>
                                 </tbody>
                             </table>
+                        </div>
+                        
+                        <!-- Image Gallery -->
+                        <div class="mt-3" id="image-gallery" style="display: none;">
+                            <h6><i class="fas fa-images me-2"></i>Ảnh Đã Upload</h6>
+                            <div class="row" id="image-gallery-content"></div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Auto Spam Section -->
+        <!-- Settings and Auto Spam Section -->
         <div class="row mb-4" id="spam-section">
-            <div class="col-12">
+            <div class="col-lg-8">
                 <div class="card shadow-sm">
                     <div class="card-header bg-success text-white">
-                        <h5 class="mb-0">
-                            <i class="fas fa-comments me-2"></i>
-                            Auto Spam Comments
+                        <h5 class="card-title mb-0">
+                            <i class="fas fa-rocket me-2"></i>
+                            🚀 Post & Comment - Auto Spam
                         </h5>
                     </div>
                     <div class="card-body">
-                        <form id="spamForm">
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label for="post-uids" class="form-label">Post UIDs (mỗi UID một dòng)</label>
-                                        <textarea class="form-control" id="post-uids" rows="4" required
-                                                  placeholder="Nhập post UIDs..."></textarea>
-                                    </div>
-                                    
-                                    <div class="mb-3">
-                                        <label for="comment-text" class="form-label">Nội dung Comment</label>
-                                        <textarea class="form-control" id="comment-text" rows="4" required
-                                                  placeholder="Nhập nội dung comment..."></textarea>
-                                    </div>
-                                </div>
-                                
-                                <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label class="form-label">Thời gian chờ (giây)</label>
-                                        <div class="row">
-                                            <div class="col-6">
-                                                <input type="number" class="form-control" id="delay-min" value="5" min="1" max="300">
-                                                <small class="text-muted">Tối thiểu</small>
-                                            </div>
-                                            <div class="col-6">
-                                                <input type="number" class="form-control" id="delay-max" value="15" min="1" max="300">
-                                                <small class="text-muted">Tối đa</small>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    
-                                    <div class="mb-3">
-                                        <label class="form-label">Tùy chọn</label>
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" id="auto-like" checked>
-                                            <label class="form-check-label" for="auto-like">
-                                                Tự động like bài viết
-                                            </label>
-                                        </div>
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" id="random-comments">
-                                            <label class="form-check-label" for="random-comments">
-                                                Random thứ tự comment
-                                            </label>
-                                        </div>
-                                    </div>
-                                    
-                                    <div class="mb-3">
-                                        <label for="imageUpload" class="form-label">Upload Ảnh (tùy chọn)</label>
-                                        <input type="file" class="form-control" id="imageUpload" accept="image/*">
-                                        <div id="imagePreview" class="mt-2"></div>
-                                    </div>
-                                </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold">📝 Post UID</label>
+                                <textarea class="form-control" id="post-uids" rows="4" 
+                                        placeholder="Nhập Post UID, mỗi UID một dòng..."></textarea>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold">💬 Comment</label>
+                                <textarea class="form-control" id="comment-texts" rows="4" 
+                                        placeholder="Nhập nội dung comment, mỗi comment một dòng..."></textarea>
+                            </div>
+                        </div>
+                        
+                        <div class="row mt-3">
+                            <div class="col-12 text-center">
+                                <button class="btn btn-success btn-lg me-2" id="btn-start-spam">
+                                    <i class="fas fa-play me-1"></i>🚀 Bắt Đầu Spam
+                                </button>
+                                <button class="btn btn-danger btn-lg me-2" id="btn-stop-spam" style="display: none;">
+                                    <i class="fas fa-stop me-1"></i>⏹️ Dừng Spam
+                                </button>
+                                <button class="btn btn-warning btn-lg" id="btn-pause-spam" style="display: none;">
+                                    <i class="fas fa-pause me-1"></i>⏸️ Tạm Dừng
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-4">
+                <div class="card shadow-sm">
+                    <div class="card-header bg-warning text-dark">
+                        <h5 class="card-title mb-0">
+                            <i class="fas fa-cog me-2"></i>
+                            ⚙️ Cài Đặt & Trạng Thái
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row g-3">
+                            <div class="col-6">
+                                <label class="form-label small">⏱️ Min Delay (ms)</label>
+                                <input type="number" class="form-control form-control-sm" id="min-delay" value="500">
+                            </div>
+                            <div class="col-6">
+                                <label class="form-label small">⏱️ Max Delay (ms)</label>
+                                <input type="number" class="form-control form-control-sm" id="max-delay" value="2500">
+                            </div>
+                            <div class="col-6">
+                                <label class="form-label small">🔄 Max Threads</label>
+                                <input type="number" class="form-control form-control-sm" id="max-threads" value="10">
+                            </div>
+                            <div class="col-6">
+                                <label class="form-label small">💬 Số Comment</label>
+                                <input type="number" class="form-control form-control-sm" id="num-comments" value="0">
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label small">🖼️ Comment + Ảnh</label>
+                                <input type="number" class="form-control form-control-sm" id="num-image-comments" value="0">
+                            </div>
+                        </div>
+                        
+                        <hr>
+                        
+                        <div class="status-cards">
+                            <div class="alert alert-success mb-2" id="status-alert">
+                                <i class="fas fa-check-circle me-2"></i>
+                                <strong>✅ Tool Đã Sẵn Sàng Chạy</strong>
                             </div>
                             
-                            <div class="text-center">
-                                <button type="button" class="btn btn-success btn-lg me-2" id="btn-start-spam">
-                                    <i class="fas fa-play me-1"></i>Bắt đầu Spam
-                                </button>
-                                <button type="button" class="btn btn-danger btn-lg" id="btn-stop-spam" style="display: none;">
-                                    <i class="fas fa-stop me-1"></i>Dừng Spam
-                                </button>
+                            <div class="alert alert-info mb-2">
+                                <i class="fas fa-chart-bar me-2"></i>
+                                <strong id="progress-text">📊 Comment 0/0</strong>
                             </div>
-                        </form>
+                            
+                            <div class="alert alert-warning mb-0">
+                                <i class="fas fa-chart-line me-2"></i>
+                                <strong id="total-posted-text">📈 Tổng comment đã chạy: 0</strong>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -337,18 +507,22 @@ def get_index_template():
         <div class="row">
             <div class="col-12">
                 <div class="card shadow-sm">
-                    <div class="card-header bg-info text-white d-flex justify-content-between align-items-center">
-                        <h5 class="mb-0">
-                            <i class="fas fa-list me-2"></i>
-                            Logs Hoạt Động
+                    <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
+                        <h5 class="card-title mb-0">
+                            <i class="fas fa-terminal me-2"></i>
+                            📋 Logs & Hoạt Động
                         </h5>
-                        <button type="button" class="btn btn-sm btn-outline-light" id="btn-clear-logs">
+                        <button class="btn btn-outline-light btn-sm" id="btn-clear-logs">
                             <i class="fas fa-trash me-1"></i>Xóa Logs
                         </button>
                     </div>
                     <div class="card-body p-0">
-                        <div id="logs-container" style="height: 400px; overflow-y: auto; padding: 15px;">
-                            <!-- Logs will appear here -->
+                        <div id="logs-container" class="p-3 bg-dark text-light font-monospace" 
+                             style="height: 300px; overflow-y: auto; font-size: 0.9em;">
+                            <div class="text-success">
+                                <i class="fas fa-info-circle me-2"></i>
+                                [INFO] Tool khởi động thành công. Sẵn sàng sử dụng!
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -356,26 +530,134 @@ def get_index_template():
         </div>
     </div>
 
-    <!-- Add Token Modal -->
+    <!-- Add Tokens Modal -->
     <div class="modal fade" id="addTokensModal" tabindex="-1">
-        <div class="modal-dialog">
+        <div class="modal-dialog modal-lg">
             <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Thêm Tokens</h5>
+                <div class="modal-header bg-success text-white">
+                    <h5 class="modal-title">
+                        <i class="fas fa-plus me-2"></i>
+                        ➕ Nhập Token Facebook
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle me-2"></i>
+                        <strong>Hướng dẫn:</strong> Nhập các token Facebook, mỗi token một dòng. Tool sẽ tự động kiểm tra và loại bỏ token trùng lặp.
+                    </div>
+                    
+                    <label class="form-label fw-bold">🔑 Nhập Token - Mỗi token một dòng:</label>
+                    <textarea class="form-control font-monospace" id="tokens-input" rows="12" 
+                             placeholder="Nhập token ở đây, mỗi token một dòng...
+Ví dụ:
+EAAG...
+EAAG...
+EAAG..."></textarea>
+                    
+                    <div class="mt-3">
+                        <small class="text-muted">
+                            <i class="fas fa-shield-alt me-1"></i>
+                            Token sẽ được mã hóa và chỉ lưu trữ trong phiên làm việc hiện tại.
+                        </small>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="fas fa-times me-1"></i>❌ Hủy
+                    </button>
+                    <button type="button" class="btn btn-success" id="btn-save-tokens">
+                        <i class="fas fa-save me-1"></i>✅ Thêm Token
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Upload Images Modal -->
+    <div class="modal fade" id="uploadImagesModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-warning text-dark">
+                    <h5 class="modal-title">
+                        <i class="fas fa-image me-2"></i>
+                        📁 Upload Ảnh cho Comment
+                    </h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
-                    <form id="addTokenForm">
-                        <div class="mb-3">
-                            <label for="tokens-input" class="form-label">Tokens (mỗi token một dòng)</label>
-                            <textarea class="form-control" id="tokens-input" rows="10" required
-                                      placeholder="Nhập tokens, mỗi token một dòng..."></textarea>
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle me-2"></i>
+                        <strong>Hướng dẫn:</strong> Upload ảnh để sử dụng cho comment kèm ảnh. 
+                        Hỗ trợ: JPG, JPEG, PNG, GIF, WEBP. Tối đa 50MB mỗi file.
+                    </div>
+                    
+                    <!-- File Upload Area -->
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">🖼️ Chọn ảnh để upload:</label>
+                        <input type="file" class="form-control" id="images-input" 
+                               accept="image/*" multiple>
+                        <div class="form-text">
+                            <i class="fas fa-info-circle me-1"></i>
+                            Có thể chọn nhiều ảnh cùng lúc (Ctrl + Click)
                         </div>
-                    </form>
+                    </div>
+                    
+                    <!-- Drag & Drop Area -->
+                    <div class="border border-2 border-dashed border-primary rounded p-4 text-center upload-dropzone" 
+                         id="upload-dropzone">
+                        <i class="fas fa-cloud-upload-alt fa-3x text-primary mb-3"></i>
+                        <h5>Kéo thả ảnh vào đây</h5>
+                        <p class="text-muted mb-0">hoặc click để chọn file</p>
+                    </div>
+                    
+                    <!-- Upload Progress -->
+                    <div class="mt-3" id="upload-progress-container" style="display: none;">
+                        <label class="form-label">📈 Tiến độ upload:</label>
+                        <div class="progress">
+                            <div class="progress-bar progress-bar-striped progress-bar-animated" 
+                                 id="upload-progress" role="progressbar" style="width: 0%">
+                                0%
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Selected Files Preview -->
+                    <div class="mt-3" id="selected-files-preview" style="display: none;">
+                        <h6><i class="fas fa-images me-2"></i>Files đã chọn:</h6>
+                        <div class="row" id="selected-files-list"></div>
+                    </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
-                    <button type="button" class="btn btn-primary" id="btn-save-tokens">Thêm Tokens</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="fas fa-times me-1"></i>❌ Hủy
+                    </button>
+                    <button type="button" class="btn btn-warning" id="btn-upload-images-confirm">
+                        <i class="fas fa-upload me-1"></i>📤 Upload Ảnh
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Token Details Modal -->
+    <div class="modal fade" id="tokenDetailsModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-info text-white">
+                    <h5 class="modal-title">
+                        <i class="fas fa-info-circle me-2"></i>
+                        📊 Chi Tiết Token
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="token-details-content">
+                    <!-- Token details will be loaded here -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="fas fa-times me-1"></i>Đóng
+                    </button>
                 </div>
             </div>
         </div>
@@ -404,6 +686,7 @@ def get_index_template():
         // Global variables - Match local version exactly
         let socket = null;
         let tokensData = [];
+        let imagesData = [];
         let spamStatus = { is_running: false };
         let autoRefreshInterval = null;
         
@@ -415,6 +698,7 @@ def get_index_template():
                 socket.on('connect', function() {
                     showConnectionStatus('connected', 'Đã kết nối');
                     addLog('Kết nối WebSocket thành công!', 'success');
+                    socket.emit('join_room');
                 });
                 
                 socket.on('disconnect', function() {
@@ -425,6 +709,43 @@ def get_index_template():
                 socket.on('reconnect', function() {
                     showConnectionStatus('connected', 'Đã kết nối');
                     addLog('Đã kết nối lại WebSocket!', 'success');
+                });
+                
+                // Token checking events
+                socket.on('token_check_progress', function(data) {
+                    updateLoadingModal(`Đang kiểm tra token ${data.current}/${data.total}`, 
+                                      `Token: ${data.token_id}`);
+                });
+                
+                socket.on('tokens_checked', function(data) {
+                    hideLoadingModal();
+                    if (data.success) {
+                        loadTokensData();
+                        showAlert('Kiểm tra token hoàn tất!', 'success');
+                    }
+                });
+                
+                // Spam events
+                socket.on('spam_started', function(data) {
+                    spamStatus.is_running = true;
+                    updateSpamUI();
+                    addLog(`Bắt đầu spam ${data.total_comments} comments cho ${data.posts} posts`, 'info');
+                });
+                
+                socket.on('spam_progress', function(data) {
+                    updateSpamProgress(data.comments_sent, data.total_comments);
+                    addLog(`Comment #${data.comments_sent}: ${data.comment_id} - Post ${data.post_uid}${data.with_image ? ' (có ảnh)' : ''}`, 'success');
+                });
+                
+                socket.on('spam_error', function(data) {
+                    addLog(`Lỗi spam: ${data.error}`, 'error');
+                });
+                
+                socket.on('spam_completed', function(data) {
+                    spamStatus.is_running = false;
+                    updateSpamUI();
+                    hideLoadingModal();
+                    addLog(`Hoàn thành spam! Total: ${data.total_comments}`, 'success');
                 });
                 
             } catch (e) {
@@ -453,6 +774,7 @@ def get_index_template():
         function initializeApp() {
             // Token management events
             $('#btn-add-tokens').click(() => $('#addTokensModal').modal('show'));
+            $('#btn-upload-images').click(() => $('#uploadImagesModal').modal('show'));
             
             // Add tokens
             $('#btn-save-tokens').click(addTokens);
@@ -460,14 +782,27 @@ def get_index_template():
             // Token table events
             $('#select-all-tokens').change(toggleAllTokens);
             $('#btn-check-selected').click(checkSelectedTokens);
-            $('#btn-delete-selected').click(deleteSelectedTokens);
+            $('#btn-delete-selected').click(() => deleteTokens('selected'));
+            $('#btn-delete-all').click(() => deleteTokens('all'));
+            $('#btn-delete-die').click(() => deleteTokens('die'));
+            $('#btn-delete-duplicates').click(() => deleteTokens('duplicates'));
             
             // Spam management
             $('#btn-start-spam').click(startSpam);
             $('#btn-stop-spam').click(stopSpam);
             
+            // Image upload
+            $('#btn-upload-images-confirm').click(uploadImages);
+            $('#images-input').change(previewSelectedFiles);
+            
             // Logs
             $('#btn-clear-logs').click(clearLogs);
+            
+            // Auto fetch page names
+            $('#post-uids').on('input', handleUIDChange);
+            
+            // File drag & drop
+            setupFileDragDrop();
             
             // Setup modal event handlers
             setupModalHandlers();
@@ -526,6 +861,33 @@ def get_index_template():
                     forceCleanupModal();
                 }
             }, 5000);
+        }
+        
+        function setupFileDragDrop() {
+            const dropzone = $('#upload-dropzone');
+            
+            dropzone.on('click', function() {
+                $('#images-input').click();
+            });
+            
+            dropzone.on('dragover', function(e) {
+                e.preventDefault();
+                $(this).addClass('dragover');
+            });
+            
+            dropzone.on('dragleave', function(e) {
+                e.preventDefault();
+                $(this).removeClass('dragover');
+            });
+            
+            dropzone.on('drop', function(e) {
+                e.preventDefault();
+                $(this).removeClass('dragover');
+                
+                const files = e.originalEvent.dataTransfer.files;
+                $('#images-input')[0].files = files;
+                previewSelectedFiles();
+            });
         }
         
         // Token management functions - Match local version exactly
@@ -595,6 +957,12 @@ def get_index_template():
             });
         }
         
+        function loadImagesData() {
+            // Load images data - placeholder for now
+            imagesData = [];
+            renderImageGallery();
+        }
+        
         function renderTokensTable() {
             const tbody = $('#tokens-table-body');
             tbody.empty();
@@ -602,7 +970,7 @@ def get_index_template():
             if (!tokensData || tokensData.length === 0) {
                 tbody.append(`
                     <tr>
-                        <td colspan="6" class="text-center text-muted">
+                        <td colspan="7" class="text-center text-muted py-4">
                             <i class="fas fa-info-circle me-2"></i>
                             Chưa có tokens nào. Hãy thêm tokens để bắt đầu.
                         </td>
@@ -617,15 +985,24 @@ def get_index_template():
                     '<span class="badge bg-success">LIVE</span>' : 
                     '<span class="badge bg-danger">DIE</span>';
                 
-                const tokenDisplay = token.token ? token.token.substring(0, 20) + '...' : 'N/A';
+                const tokenDisplay = token.token ? token.token.substring(0, 30) + '...' : 'N/A';
+                const commentsCount = token.comments_sent || 0;
                 
                 tbody.append(`
                     <tr class="token-row ${statusClass}" data-token-id="${token.id}">
-                        <td><input type="checkbox" class="token-checkbox" value="${token.id}"></td>
+                        <td><input type="checkbox" class="form-check-input token-checkbox" value="${token.id}"></td>
                         <td>${index + 1}</td>
-                        <td>${token.page_name || 'Unknown'}</td>
-                        <td><code>${tokenDisplay}</code></td>
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <i class="fab fa-facebook-square text-primary me-2"></i>
+                                <span>${token.page_name || 'Unknown'}</span>
+                            </div>
+                        </td>
+                        <td><code class="small">${tokenDisplay}</code></td>
                         <td>${statusBadge}</td>
+                        <td>
+                            <span class="badge bg-info">${commentsCount}</span>
+                        </td>
                         <td>
                             <button class="btn btn-sm btn-outline-info me-1" onclick="viewTokenDetails('${token.id}')" title="Chi tiết">
                                 <i class="fas fa-eye"></i>
@@ -635,6 +1012,34 @@ def get_index_template():
                             </button>
                         </td>
                     </tr>
+                `);
+            });
+        }
+        
+        function renderImageGallery() {
+            const gallery = $('#image-gallery');
+            const content = $('#image-gallery-content');
+            
+            if (!imagesData || imagesData.length === 0) {
+                gallery.hide();
+                return;
+            }
+            
+            content.empty();
+            gallery.show();
+            
+            imagesData.forEach((image, index) => {
+                content.append(`
+                    <div class="col-md-2 mb-2">
+                        <div class="card">
+                            <img src="${image.url}" class="card-img-top image-thumbnail" alt="Image ${index + 1}">
+                            <div class="card-body p-2">
+                                <button class="btn btn-sm btn-outline-danger w-100" onclick="deleteImage('${image.id}')">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
                 `);
             });
         }
@@ -669,32 +1074,34 @@ def get_index_template():
         function updateStatistics() {
             const totalTokens = tokensData.length;
             const liveTokens = tokensData.filter(token => token.status === 'LIVE').length;
+            const totalComments = tokensData.reduce((sum, token) => sum + (token.comments_sent || 0), 0);
             
             $('#total-tokens').text(totalTokens);
             $('#live-tokens').text(liveTokens);
+            $('#total-comments').text(totalComments);
         }
         
         function startSpam() {
             const postUIDs = $('#post-uids').val().trim();
-            const commentText = $('#comment-text').val().trim();
+            const commentTexts = $('#comment-texts').val().trim();
             
             if (!postUIDs) {
                 showAlert('Vui lòng nhập Post UIDs!', 'warning');
                 return;
             }
             
-            if (!commentText) {
+            if (!commentTexts) {
                 showAlert('Vui lòng nhập nội dung comment!', 'warning');
                 return;
             }
             
             const data = {
                 post_uids: postUIDs,
-                comment_text: commentText,
-                delay_min: parseInt($('#delay-min').val()),
-                delay_max: parseInt($('#delay-max').val()),
-                auto_like: $('#auto-like').is(':checked'),
-                random_comments: $('#random-comments').is(':checked')
+                comment_texts: commentTexts,
+                min_delay: parseInt($('#min-delay').val()),
+                max_delay: parseInt($('#max-delay').val()),
+                max_threads: parseInt($('#max-threads').val()),
+                auto_like: $('#auto-like').is(':checked')
             };
             
             showLoadingModal('Đang bắt đầu spam...', 'Chuẩn bị các comment tasks');
@@ -710,6 +1117,7 @@ def get_index_template():
                         showAlert(response.message, 'success');
                         spamStatus.is_running = true;
                         updateSpamUI();
+                        addLog('Đã khởi chạy spam process', 'success');
                     } else {
                         showAlert(response.message, 'danger');
                     }
@@ -741,11 +1149,20 @@ def get_index_template():
         function updateSpamUI() {
             if (spamStatus.is_running) {
                 $('#btn-start-spam').hide();
-                $('#btn-stop-spam').show();
+                $('#btn-stop-spam, #btn-pause-spam').show();
+                $('#tool-status').text('Đang Chạy');
+                $('#status-alert').removeClass('alert-success').addClass('alert-warning').html('<i class="fas fa-play me-2"></i><strong>🚀 Tool Đang Chạy</strong>');
             } else {
                 $('#btn-start-spam').show();
-                $('#btn-stop-spam').hide();
+                $('#btn-stop-spam, #btn-pause-spam').hide();
+                $('#tool-status').text('Sẵn Sàng');
+                $('#status-alert').removeClass('alert-warning').addClass('alert-success').html('<i class="fas fa-check-circle me-2"></i><strong>✅ Tool Đã Sẵn Sàng Chạy</strong>');
             }
+        }
+        
+        function updateSpamProgress(current, total) {
+            $('#progress-text').text(`📊 Comment ${current}/${total}`);
+            $('#total-posted-text').text(`📈 Tổng comment đã chạy: ${current}`);
         }
         
         function addLog(message, type = 'info') {
@@ -787,6 +1204,11 @@ def get_index_template():
             setTimeout(function() {
                 hideLoadingModal();
             }, 120000);
+        }
+        
+        function updateLoadingModal(title, detail = '') {
+            $('#loading-text').text(title);
+            $('#loading-detail').text(detail);
         }
         
         function hideLoadingModal() {
@@ -883,33 +1305,36 @@ def get_index_template():
                 </div>
             `;
             
-            // Add to top of container
-            $('.container-fluid').prepend(alertHtml);
+            // Add to alert container
+            $('#alert-container').prepend(alertHtml);
             
             // Auto remove after 5 seconds
             setTimeout(() => {
-                $('.alert').first().alert('close');
+                $('#alert-container .alert').first().alert('close');
             }, 5000);
         }
         
-        function updateUptime() {
-            let startTime = Date.now();
-            setInterval(() => {
-                const uptime = Date.now() - startTime;
-                const hours = Math.floor(uptime / 3600000);
-                const minutes = Math.floor((uptime % 3600000) / 60000);
-                const seconds = Math.floor((uptime % 60000) / 1000);
-                $('#uptime').text(`${hours}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`);
-            }, 1000);
+        function startAutoRefresh() {
+            // Auto refresh every 30 seconds
+            autoRefreshInterval = setInterval(function() {
+                if (!spamStatus.is_running) {
+                    loadTokensData();
+                }
+            }, 30000);
         }
         
-        // Placeholder functions
+        // Placeholder functions for features being developed
         function checkSelectedTokens() {
-            showAlert('Tính năng kiểm tra tokens đang phát triển cho môi trường serverless...', 'info');
+            const selectedTokens = $('.token-checkbox:checked').length;
+            if (selectedTokens === 0) {
+                showAlert('Vui lòng chọn ít nhất một token!', 'warning');
+                return;
+            }
+            showAlert(`Đang kiểm tra ${selectedTokens} tokens... (Tính năng đang phát triển cho môi trường serverless)`, 'info');
         }
         
-        function deleteSelectedTokens() {
-            showAlert('Tính năng xóa nhiều tokens đang phát triển...', 'info');
+        function deleteTokens(action) {
+            showAlert(`Tính năng xóa ${action} tokens đang phát triển...`, 'info');
         }
         
         function toggleAllTokens() {
@@ -918,7 +1343,68 @@ def get_index_template():
         }
         
         function viewTokenDetails(tokenId) {
-            showAlert('Tính năng xem chi tiết token đang phát triển...', 'info');
+            const token = tokensData.find(t => t.id === tokenId);
+            if (!token) return;
+            
+            $('#token-details-content').html(`
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6>🔑 Token Info</h6>
+                        <p><strong>Token:</strong> <code>${token.token.substring(0, 50)}...</code></p>
+                        <p><strong>Page Name:</strong> ${token.page_name}</p>
+                        <p><strong>Status:</strong> <span class="badge bg-${token.status === 'LIVE' ? 'success' : 'danger'}">${token.status}</span></p>
+                    </div>
+                    <div class="col-md-6">
+                        <h6>📊 Statistics</h6>
+                        <p><strong>Comments Sent:</strong> ${token.comments_sent || 0}</p>
+                        <p><strong>Last Used:</strong> ${token.last_used || 'Never'}</p>
+                        <p><strong>Created:</strong> ${token.created_at || 'Unknown'}</p>
+                    </div>
+                </div>
+            `);
+            
+            $('#tokenDetailsModal').modal('show');
+        }
+        
+        function uploadImages() {
+            showAlert('Tính năng upload ảnh đang phát triển cho môi trường serverless...', 'info');
+        }
+        
+        function previewSelectedFiles() {
+            const files = $('#images-input')[0].files;
+            if (files.length === 0) {
+                $('#selected-files-preview').hide();
+                return;
+            }
+            
+            const preview = $('#selected-files-list');
+            preview.empty();
+            
+            for (let i = 0; i < files.length; i++) {
+                const file = files[i];
+                const reader = new FileReader();
+                
+                reader.onload = function(e) {
+                    preview.append(`
+                        <div class="col-md-3 mb-2">
+                            <div class="card">
+                                <img src="${e.target.result}" class="card-img-top" style="height: 100px; object-fit: cover;">
+                                <div class="card-body p-2">
+                                    <small class="text-muted">${file.name}</small>
+                                </div>
+                            </div>
+                        </div>
+                    `);
+                };
+                
+                reader.readAsDataURL(file);
+            }
+            
+            $('#selected-files-preview').show();
+        }
+        
+        function handleUIDChange() {
+            // Placeholder for auto-fetching page names from UIDs
         }
         
         // Initialize everything when document is ready
@@ -931,12 +1417,13 @@ def get_index_template():
             
             // Load initial data
             loadTokensData();
+            loadImagesData();
             
-            // Start uptime counter
-            updateUptime();
+            // Start auto refresh
+            startAutoRefresh();
             
             // Initial log
-            addLog('Ứng dụng đã khởi chạy thành công! (Phiên bản Vercel)', 'success');
+            addLog('Tool khởi động thành công. Sẵn sàng sử dụng! (Phiên bản Vercel)', 'success');
         });
     </script>
 </body>
